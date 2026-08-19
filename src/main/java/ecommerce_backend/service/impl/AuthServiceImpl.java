@@ -50,11 +50,11 @@ public class AuthServiceImpl implements AuthService {
                 refreshTokenService.createRefreshToken(user.getId());
 
 
-        LoginResponseDto response = new LoginResponseDto();
-
-        response.setUser(userResponse);
-        response.setToken(accessToken);
-        response.setRefreshToken(refreshToken.getToken());
+        LoginResponseDto response = LoginResponseDto.builder()
+                .user(userResponse)
+                .token(accessToken)
+                .refreshToken(refreshToken.getToken())
+                .build();
 
         return response;
         }
@@ -79,11 +79,11 @@ public class AuthServiceImpl implements AuthService {
         UserResponseDto userResponse =
                 UserMapper.toResponseDto(user);
 
-        LoginResponseDto response = new LoginResponseDto();
-
-        response.setUser(userResponse);
-        response.setToken(newAccessToken);
-        response.setRefreshToken(newRefreshToken.getToken());
+        LoginResponseDto response = LoginResponseDto.builder()
+                .user(userResponse)
+                .token(newAccessToken)
+                .refreshToken(newRefreshToken.getToken())
+                .build();
 
         return response;
     }

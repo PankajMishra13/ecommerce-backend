@@ -32,12 +32,13 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                 .orElseThrow(() ->
                         new RuntimeException("User not found"));
 
-        RefreshToken refreshToken =
-                new RefreshToken(
-                        user,
-                        UUID.randomUUID().toString(),
-                        LocalDateTime.now().plusDays(7)
-                );
+        RefreshToken refreshToken = RefreshToken.builder()
+                .user(user)
+                .token(UUID.randomUUID().toString())
+                .expiresAt(LocalDateTime.now().plusDays(7))
+                .createdAt(LocalDateTime.now())
+                .revoked(false)
+                .build();
 
         return refreshTokenRepository.save(refreshToken);
     }
