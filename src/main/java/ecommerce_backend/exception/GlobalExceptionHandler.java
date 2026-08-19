@@ -74,11 +74,29 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleBrandNotFound(
+    public ResponseEntity<Map<String, String>> handleProductNotFound(
             ProductNotFoundException ex) {
 
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(Map.of("message", ex.getMessage()));
+    }
+
+    @ExceptionHandler(InventoryNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleInventoryNotFound(
+            InventoryNotFoundException ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Map.of("message", ex.getMessage()));
+    }
+
+    @ExceptionHandler(InventoryAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleInventoryAlreadyExists(
+            InventoryAlreadyExistsException ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
                 .body(Map.of("message", ex.getMessage()));
     }
 

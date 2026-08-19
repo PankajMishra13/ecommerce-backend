@@ -54,6 +54,8 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
+                        .requestMatchers("/api/inventories/**").hasRole("ADMIN")
+
                         .anyRequest().authenticated()
                 )
 
