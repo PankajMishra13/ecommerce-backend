@@ -10,37 +10,30 @@ public class CategoryMapper {
 
     public Category toEntity(CategoryRequestDto dto) {
 
-        Category category = new Category();
-
-        category.setName(dto.getName());
-        category.setDescription(dto.getDescription());
-        category.setIsActive(dto.getIsActive());
-
-        return category;
-
+        return Category.builder()
+                .name(dto.getName())
+                .description(dto.getDescription())
+                .isActive(dto.getIsActive())
+                .build();
     }
 
     public CategoryResponseDto toResponseDto(Category category){
 
-        CategoryResponseDto responseDto = new CategoryResponseDto();
-
-        responseDto.setId(category.getId());
+        Long parentCategoryId = null;
 
         if (category.getParentCategory() != null) {
-            responseDto.setParentCategoryId(
-                    category.getParentCategory().getId()
-            );
+            parentCategoryId = category.getParentCategory().getId();
         }
 
-        responseDto.setName(category.getName());
-        responseDto.setDescription(category.getDescription());
-        responseDto.setIsActive(category.getIsActive());
-        responseDto.setCreatedAt(category.getCreatedAt());
-        responseDto.setUpdatedAt(category.getUpdatedAt());
-
-        return responseDto;
-
-
+        return CategoryResponseDto.builder()
+                .id(category.getId())
+                .parentCategoryId(parentCategoryId)
+                .name(category.getName())
+                .description(category.getDescription())
+                .isActive(category.getIsActive())
+                .createdAt(category.getCreatedAt())
+                .updatedAt(category.getUpdatedAt())
+                .build();
 
     }
 }

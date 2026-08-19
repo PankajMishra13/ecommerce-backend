@@ -2,10 +2,7 @@ package ecommerce_backend.entity;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 
 import java.time.LocalDateTime;
@@ -16,6 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class RefreshToken {
 
 
@@ -39,13 +37,5 @@ public class RefreshToken {
     @Column(nullable = false)
     private boolean revoked = false;
 
-
-    public RefreshToken(User user, String token, LocalDateTime expiresAt) {
-        this.user = user;
-        this.token = token;
-        this.expiresAt = expiresAt;
-        this.createdAt = LocalDateTime.now();
-        this.revoked = false;
-    }
 
     }

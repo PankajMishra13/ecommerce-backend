@@ -8,42 +8,38 @@ public class AddressMapper {
 
     public static Address toEntity(AddressRequestDto request) {
 
-        Address address = new Address();
-
-        address.setAddressType(request.getAddressType());
-        address.setFullName(request.getFullName());
-        address.setMobileNumber(request.getMobileNumber());
-        address.setAddressLine1(request.getAddressLine1());
-        address.setAddressLine2(request.getAddressLine2());
-        address.setLandmark(request.getLandmark());
-        address.setCity(request.getCity());
-        address.setState(request.getState());
-        address.setPostalCode(request.getPostalCode());
-        address.setCountry(request.getCountry());
-        address.setIsDefault(request.getIsDefault());
-
-        return address;
+        return Address.builder()
+                .addressType(request.getAddressType())
+                .fullName(request.getFullName())
+                .mobileNumber(request.getMobileNumber())
+                .addressLine1(request.getAddressLine1())
+                .addressLine2(request.getAddressLine2())
+                .landmark(request.getLandmark())
+                .city(request.getCity())
+                .state(request.getState())
+                .postalCode(request.getPostalCode())
+                .country(request.getCountry())
+                .isDefault(request.getIsDefault())
+                .build();
     }
 
     public static AddressResponseDto toResponseDto(Address address) {
 
-        AddressResponseDto response = new AddressResponseDto();
-
-        response.setId(address.getId());
-        response.setAddressType(address.getAddressType());
-        response.setFullName(address.getFullName());
-        response.setMobileNumber(address.getMobileNumber());
-        response.setAddressLine1(address.getAddressLine1());
-        response.setAddressLine2(address.getAddressLine2());
-        response.setLandmark(address.getLandmark());
-        response.setCity(address.getCity());
-        response.setState(address.getState());
-        response.setPostalCode(address.getPostalCode());
-        response.setCountry(address.getCountry());
-        response.setIsDefault(address.getIsDefault());
-        response.setCreatedAt(address.getCreatedAt());
-        response.setUpdatedAt(address.getUpdatedAt());
-
-        return response;
+        return AddressResponseDto.builder()
+                .id(address.getId())
+                .addressType(address.getAddressType())
+                .fullName(address.getFullName())
+                .mobileNumber(address.getMobileNumber())
+                .addressLine1(address.getAddressLine1())
+                .addressLine2(address.getAddressLine2())
+                .landmark(address.getLandmark())
+                .city(address.getCity())
+                .state(address.getState())
+                .postalCode(address.getPostalCode())
+                .country(address.getCountry())
+                .isDefault(address.getIsDefault())
+                .createdAt(address.getCreatedAt())
+                .updatedAt(address.getUpdatedAt())
+                .build();
     }
 }

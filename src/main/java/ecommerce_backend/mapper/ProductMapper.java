@@ -10,44 +10,45 @@ public class ProductMapper {
 
     public Product toEntity(ProductRequestDto dto) {
 
-        Product product = new Product();
-
-        product.setName(dto.getName());
-        product.setShortDescription(dto.getShortDescription());
-        product.setDescription(dto.getDescription());
-        product.setSku(dto.getSku());
-        product.setMrp(dto.getMrp());
-        product.setSellingPrice(dto.getSellingPrice());
-        product.setStatus(dto.getStatus());
-
-        return product;
+        return Product.builder()
+                .name(dto.getName())
+                .shortDescription(dto.getShortDescription())
+                .description(dto.getDescription())
+                .sku(dto.getSku())
+                .mrp(dto.getMrp())
+                .sellingPrice(dto.getSellingPrice())
+                .status(dto.getStatus())
+                .build();
     }
 
     public ProductResponseDto toResponseDto(Product product) {
 
-        ProductResponseDto responseDto = new ProductResponseDto();
-
-        responseDto.setId(product.getId());
+        Long categoryId = null;
+        Long brandId = null;
 
         if (product.getCategory() != null) {
-            responseDto.setCategoryId(product.getCategory().getId());
+            categoryId = product.getCategory().getId();
         }
 
         if (product.getBrand() != null) {
-            responseDto.setBrandId(product.getBrand().getId());
+            brandId = product.getBrand().getId();
         }
 
-        responseDto.setName(product.getName());
-        responseDto.setShortDescription(product.getShortDescription());
-        responseDto.setDescription(product.getDescription());
-        responseDto.setSku(product.getSku());
-        responseDto.setMrp(product.getMrp());
-        responseDto.setSellingPrice(product.getSellingPrice());
-        responseDto.setStatus(product.getStatus());
-        responseDto.setIsDeleted(product.getIsDeleted());
-        responseDto.setCreatedAt(product.getCreatedAt());
-        responseDto.setUpdatedAt(product.getUpdatedAt());
+        return ProductResponseDto.builder()
+                .id(product.getId())
+                .categoryId(categoryId)
+                .brandId(brandId)
+                .name(product.getName())
+                .shortDescription(product.getShortDescription())
+                .description(product.getDescription())
+                .sku(product.getSku())
+                .mrp(product.getMrp())
+                .sellingPrice(product.getSellingPrice())
+                .status(product.getStatus())
+                .isDeleted(product.getIsDeleted())
+                .createdAt(product.getCreatedAt())
+                .updatedAt(product.getUpdatedAt())
+                .build();
 
-        return responseDto;
     }
 }

@@ -8,32 +8,28 @@ public class UserMapper {
 
     public static User toEntity(UserRequestDto dto){
 
-        User user = new User();
-
-        user.setFirstName(dto.getFirstName());
-        user.setLastName(dto.getLastName());
-        user.setGender(dto.getGender());
-        user.setEmail(dto.getEmail());
-        user.setMobile(dto.getMobile());
-        user.setPassword(dto.getPassword());
-
-        return user;
+        return User.builder()
+                .firstName(dto.getFirstName())
+                .lastName(dto.getLastName())
+                .gender(dto.getGender())
+                .email(dto.getEmail())
+                .mobile(dto.getMobile())
+                .password(dto.getPassword())
+                .build();
     }
 
     public static UserResponseDto toResponseDto(User user) {
 
-        UserResponseDto response = new UserResponseDto();
-
-        response.setId(user.getId());
-        response.setFirstName(user.getFirstName());
-        response.setLastName(user.getLastName());
-        response.setGender(user.getGender());
-        response.setEmail(user.getEmail());
-        response.setMobile(user.getMobile());
-        response.setRole(user.getRole().getName());
-        response.setCreatedAt(user.getCreatedAt());
-        response.setUpdatedAt(user.getUpdatedAt());
-
-        return response;
+        return UserResponseDto.builder()
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .gender(user.getGender())
+                .email(user.getEmail())
+                .mobile(user.getMobile())
+                .role(user.getRole().getName())
+                .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
+                .build();
     }
 }

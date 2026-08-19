@@ -10,32 +10,27 @@ public class BrandMapper {
 
     public Brand toEntity(BrandRequestDto dto){
 
-        Brand brand = new Brand();
-
-        brand.setName(dto.getName());
-        brand.setDescription(dto.getDescription());
-        brand.setWebsiteUrl(dto.getWebsiteUrl());
-        brand.setCountry(dto.getCountry());
-        brand.setIsActive(dto.getIsActive());
-
-        return brand;
+        return Brand.builder()
+                .name(dto.getName())
+                .description(dto.getDescription())
+                .websiteUrl(dto.getWebsiteUrl())
+                .country(dto.getCountry())
+                .isActive(dto.getIsActive())
+                .build();
 
     }
 
     public BrandResponseDto toResponseDto(Brand brand){
 
-        BrandResponseDto responseDto = new BrandResponseDto();
-
-        responseDto.setId(brand.getId());
-        responseDto.setName(brand.getName());
-        responseDto.setDescription(brand.getDescription());
-        responseDto.setWebsiteUrl(brand.getWebsiteUrl());
-        responseDto.setCountry(brand.getCountry());
-        responseDto.setIsActive(brand.getIsActive());
-        responseDto.setCreatedAt(brand.getCreatedAt());
-        responseDto.setUpdatedAt(brand.getUpdatedAt());
-
-        return responseDto;
-
+        return BrandResponseDto.builder()
+                .id(brand.getId())
+                .name(brand.getName())
+                .description(brand.getDescription())
+                .websiteUrl(brand.getWebsiteUrl())
+                .country(brand.getCountry())
+                .isActive(brand.getIsActive())
+                .createdAt(brand.getCreatedAt())
+                .updatedAt(brand.getUpdatedAt())
+                .build();
     }
 }
