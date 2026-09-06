@@ -100,6 +100,41 @@ public class GlobalExceptionHandler {
                 .body(Map.of("message", ex.getMessage()));
     }
 
+    @ExceptionHandler(ProductImageAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleProductImageAlreadyExists(
+            ProductImageAlreadyExistsException ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of("message", ex.getMessage()));
+    }
+
+    @ExceptionHandler(ProductImageNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleProductImageNotFound(
+            ProductImageNotFoundException ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Map.of("message", ex.getMessage()));
+    }
+
+    @ExceptionHandler(ProductSpecificationAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleProductSpecificationAlreadyExists(
+            ProductSpecificationAlreadyExistsException ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of("message", ex.getMessage()));
+    }
+
+    @ExceptionHandler(ProductSpecificationNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleProductSpecificationNotFound(
+            ProductSpecificationNotFoundException ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Map.of("message", ex.getMessage()));
+    }
 
 }
 
