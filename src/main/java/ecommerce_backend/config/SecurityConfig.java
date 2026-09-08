@@ -60,6 +60,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/product-images/**").hasRole("ADMIN")
                         .requestMatchers("/api/product-specifications/**").hasRole("ADMIN")
 
+                        .requestMatchers(HttpMethod.POST, "/api/coupons").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/coupons/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/coupons/**").hasRole("ADMIN")
+
                         .requestMatchers("/api/cart/**").authenticated()
 
                         .anyRequest().authenticated()

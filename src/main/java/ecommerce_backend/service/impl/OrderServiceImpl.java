@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,6 +33,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
     private final OrderItemMapper orderItemMapper;
     private final InventoryRepository inventoryRepository;
+    private final CouponRepository couponRepository;
 
     private User getCurrentUser() {
 
@@ -109,8 +111,25 @@ public class OrderServiceImpl implements OrderService {
                             .multiply(BigDecimal.valueOf(item.getQuantity())))
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            BigDecimal discountAmount = BigDecimal.ZERO;
-            BigDecimal shippingCharge = BigDecimal.ZERO;
+        BigDecimal discountAmount = BigDecimal.ZERO;
+
+        Coupon coupon = null;
+
+        if (request.getCouponCode() != null
+                && !request.getCouponCode().isBlank()) {
+
+            coupon = getValidCoupon(
+                    request.getCouponCode(),
+                    subtotal
+            );
+
+            discountAmount = calculateDiscount(
+                    coupon,
+                    subtotal
+            );
+        }
+
+        BigDecimal shippingCharge = BigDecimal.ZERO;
 
             BigDecimal totalAmount = subtotal
                     .subtract(discountAmount)
@@ -141,6 +160,17 @@ public class OrderServiceImpl implements OrderService {
                     .build();
 
             order = orderRepository.save(order);
+
+        if (coupon != null) {
+
+            coupon.setUsedCount(
+                    coupon.getUsedCount() == null
+                            ? 1
+                            : coupon.getUsedCount() + 1
+            );
+
+            couponRepository.save(coupon);
+        }
 
             for (CartItem cartItem : cartItems) {
 
@@ -290,5 +320,74 @@ public class OrderServiceImpl implements OrderService {
 
         orderRepository.save(order);
 
+    }
+
+    private Coupon getValidCoupon(
+            String couponCode,
+            BigDecimal subtotal) {
+
+        Coupon coupon = couponRepository.findByCode(couponCode)
+                .orElseThrow(() ->
+                        new CouponException("Invalid coupon code"));
+
+        if (!coupon.getIsActive()) {
+            throw new CouponException("Coupon is inactive");
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+
+        if (now.isBefore(coupon.getStartDate())
+                || now.isAfter(coupon.getEndDate())) {
+
+            throw new CouponException(
+                    "Coupon is expired or not yet active");
+        }
+
+        if (coupon.getUsageLimit() != null
+                && coupon.getUsedCount() >= coupon.getUsageLimit()) {
+
+            throw new CouponException(
+                    "Coupon usage limit reached");
+        }
+
+        if (subtotal.compareTo(coupon.getMinimumOrderAmount()) < 0) {
+
+            throw new CouponException(
+                    "Minimum order amount for this coupon is "
+                            + coupon.getMinimumOrderAmount());
+        }
+
+        return coupon;
+    }
+
+    private BigDecimal calculateDiscount(
+            Coupon coupon,
+            BigDecimal subtotal) {
+
+        BigDecimal discountAmount = BigDecimal.ZERO;
+
+        if (coupon.getDiscountType().equalsIgnoreCase("PERCENTAGE")) {
+
+            discountAmount = subtotal
+                    .multiply(coupon.getDiscountValue())
+                    .divide(BigDecimal.valueOf(100));
+
+            if (coupon.getMaximumDiscountAmount() != null
+                    && discountAmount.compareTo(
+                    coupon.getMaximumDiscountAmount()) > 0) {
+
+                discountAmount = coupon.getMaximumDiscountAmount();
+            }
+
+        } else if (coupon.getDiscountType().equalsIgnoreCase("FIXED")) {
+
+            discountAmount = coupon.getDiscountValue();
+
+            if (discountAmount.compareTo(subtotal) > 0) {
+                discountAmount = subtotal;
+            }
+        }
+
+        return discountAmount;
     }
 }

@@ -12,4 +12,6 @@ public class OrderRequestDto {
 
     @NotNull
     private Long addressId;
+
+    private String couponCode;
 }
