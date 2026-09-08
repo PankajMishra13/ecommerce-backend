@@ -7,6 +7,7 @@ import ecommerce_backend.entity.Cart;
 import ecommerce_backend.entity.CartItem;
 import ecommerce_backend.entity.Product;
 import ecommerce_backend.entity.User;
+import ecommerce_backend.enums.CartStatus;
 import ecommerce_backend.exception.CartItemNotFoundException;
 import ecommerce_backend.exception.CartNotFoundException;
 import ecommerce_backend.exception.ProductNotFoundException;
@@ -64,7 +65,7 @@ public class CartServiceImpl implements CartService {
                 .orElseGet(() -> {
                     Cart newCart = Cart.builder()
                             .user(user)
-                            .status("ACTIVE")
+                            .status(CartStatus.ACTIVE)
                             .build();
 
                     return cartRepository.save(newCart);

@@ -1,5 +1,6 @@
 package ecommerce_backend.dto;
 
+import ecommerce_backend.enums.DiscountType;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -15,7 +16,7 @@ public class CouponResponseDto {
     private Long id;
     private String code;
     private String description;
-    private String discountType;
+    private DiscountType discountType;
     private BigDecimal discountValue;
     private BigDecimal minimumOrderAmount;
     private BigDecimal maximumDiscountAmount;

@@ -1,5 +1,6 @@
 package ecommerce_backend.dto;
 
+import ecommerce_backend.enums.DiscountType;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -23,9 +24,8 @@ public class CouponRequestDto {
     @Size(max = 255)
     private String description;
 
-    @NotBlank
-    @Size(max = 20)
-    private String discountType;
+    @NotNull
+    private DiscountType discountType;
 
     @NotNull
     @DecimalMin(value = "0.01")

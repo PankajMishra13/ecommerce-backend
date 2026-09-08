@@ -1,7 +1,9 @@
 package ecommerce_backend.dto;
 
+import ecommerce_backend.enums.Gender;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -20,9 +22,8 @@ public class UserRequestDto {
     @Size(max=100)
     private String lastName;
 
-    @NotBlank
-    @Size(max=20)
-    private String gender;
+    @NotNull(message = "Gender is required")
+    private Gender gender;
 
     @NotBlank
     @Email

@@ -1,5 +1,6 @@
 package ecommerce_backend.dto;
 
+import ecommerce_backend.enums.CartStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -14,7 +15,7 @@ public class CartResponseDto {
 
     private Long id;
     private Long userId;
-    private String status;
+    private CartStatus status;
     private List<CartItemResponseDto> items;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

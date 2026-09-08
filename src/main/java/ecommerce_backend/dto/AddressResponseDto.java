@@ -1,5 +1,6 @@
 package ecommerce_backend.dto;
 
+import ecommerce_backend.enums.AddressType;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 public class AddressResponseDto {
 
     private Long id;
-    private String addressType;
+    private AddressType addressType;
     private String fullName;
     private String mobileNumber;
     private String addressLine1;

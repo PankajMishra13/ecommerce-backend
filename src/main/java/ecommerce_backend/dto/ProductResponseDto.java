@@ -1,5 +1,6 @@
 package ecommerce_backend.dto;
 
+import ecommerce_backend.enums.ProductStatus;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -30,7 +31,7 @@ public class ProductResponseDto {
 
     private BigDecimal sellingPrice;
 
-    private String status;
+    private ProductStatus status;
 
     private Boolean isDeleted;
 

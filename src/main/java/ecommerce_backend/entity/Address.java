@@ -1,6 +1,7 @@
 package ecommerce_backend.entity;
 
 
+import ecommerce_backend.enums.AddressType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,8 +24,9 @@ public class Address {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "address_type", nullable = false, length = 20)
-    private String addressType;
+    private AddressType addressType;
 
     @Column(name = "full_name", nullable = false, length = 100)
     private String fullName;

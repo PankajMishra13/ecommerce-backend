@@ -1,5 +1,6 @@
 package ecommerce_backend.dto;
 
+import ecommerce_backend.enums.ProductStatus;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -42,6 +43,6 @@ public class ProductRequestDto {
     @DecimalMin(value = "0.0", inclusive = false)
     private BigDecimal sellingPrice;
 
-    private String status;
+    private ProductStatus status;
 
 }

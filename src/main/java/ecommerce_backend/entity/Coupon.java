@@ -1,5 +1,6 @@
 package ecommerce_backend.entity;
 
+import ecommerce_backend.enums.DiscountType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -27,8 +28,9 @@ public class Coupon {
     @Column(length = 255)
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "discount_type", nullable = false, length = 20)
-    private String discountType;
+    private DiscountType discountType;
 
     @Column(name = "discount_value", nullable = false, precision = 10, scale = 2)
     private BigDecimal discountValue;

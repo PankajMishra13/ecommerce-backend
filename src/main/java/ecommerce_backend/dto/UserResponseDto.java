@@ -1,5 +1,6 @@
 package ecommerce_backend.dto;
 
+import ecommerce_backend.enums.Gender;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ public class UserResponseDto {
     private Long id;
     private String firstName;
     private String lastName;
-    private String gender;
+    private Gender gender;
     private String email;
     private String mobile;
     private String role;

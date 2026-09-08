@@ -1,5 +1,6 @@
 package ecommerce_backend.entity;
 
+import ecommerce_backend.enums.ProductStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -47,8 +48,9 @@ public class Product {
     @Column(name = "selling_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal sellingPrice;
 
+    @Enumerated(EnumType.STRING)
     @Column(length = 20)
-    private String status;
+    private ProductStatus status;
 
     @Column(name = "is_deleted")
     private Boolean isDeleted;

@@ -3,6 +3,8 @@ package ecommerce_backend.service.impl;
 import ecommerce_backend.dto.PaymentRequestDto;
 import ecommerce_backend.dto.PaymentResponseDto;
 import ecommerce_backend.entity.*;
+import ecommerce_backend.enums.OrderStatus;
+import ecommerce_backend.enums.PaymentStatus;
 import ecommerce_backend.exception.InventoryNotFoundException;
 import ecommerce_backend.exception.OrderNotFoundException;
 import ecommerce_backend.exception.PaymentException;
@@ -43,7 +45,7 @@ public class PaymentServiceImpl implements PaymentService {
             throw new UnauthorizedAccessException("Unauthorized access");
         }
 
-        if (!order.getOrderStatus().equals("PENDING")) {
+        if (!order.getOrderStatus().equals(OrderStatus.PENDING)) {
             throw new PaymentException("Order is not eligible for payment");
         }
 
@@ -52,7 +54,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         boolean paymentInProgress = existingPayments.stream()
                 .anyMatch(payment ->
-                        payment.getPaymentStatus().equals("INITIATED"));
+                        payment.getPaymentStatus().equals(PaymentStatus.INITIATED));
 
         if (paymentInProgress) {
             throw new PaymentException("Payment is already in progress");
@@ -60,7 +62,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         boolean paymentSuccessful = existingPayments.stream()
                 .anyMatch(payment ->
-                        payment.getPaymentStatus().equals("SUCCESS"));
+                        payment.getPaymentStatus().equals(PaymentStatus.SUCCESS));
 
         if (paymentSuccessful) {
             throw new PaymentException("Order is already paid");
@@ -68,7 +70,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         boolean paymentFailed = existingPayments.stream()
                 .anyMatch(payment ->
-                        payment.getPaymentStatus().equals("FAILED"));
+                        payment.getPaymentStatus().equals(PaymentStatus.FAILED));
 
         if (paymentFailed) {
 
@@ -97,7 +99,7 @@ public class PaymentServiceImpl implements PaymentService {
         Payment payment = Payment.builder()
                 .order(order)
                 .paymentMethod(request.getPaymentMethod())
-                .paymentStatus("INITIATED")
+                .paymentStatus(PaymentStatus.INITIATED)
                 .amount(order.getTotalAmount())
                 .build();
 
@@ -125,7 +127,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElseThrow(() ->
                         new PaymentException("Payment not found"));
 
-        if (!payment.getPaymentStatus().equals("INITIATED")) {
+        if (!payment.getPaymentStatus().equals(PaymentStatus.INITIATED)) {
             throw new PaymentException("Payment is not in progress");
         }
 
@@ -153,11 +155,11 @@ public class PaymentServiceImpl implements PaymentService {
             inventoryRepository.save(inventory);
         }
 
-        payment.setPaymentStatus("SUCCESS");
+        payment.setPaymentStatus(PaymentStatus.SUCCESS);
         payment.setPaymentCompletedAt(LocalDateTime.now());
 
-        order.setPaymentStatus("SUCCESS");
-        order.setOrderStatus("CONFIRMED");
+        order.setPaymentStatus(PaymentStatus.SUCCESS);
+        order.setOrderStatus(OrderStatus.CONFIRMED);
 
         paymentRepository.save(payment);
         orderRepository.save(order);
@@ -173,7 +175,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElseThrow(() ->
                         new PaymentException("Payment not found"));
 
-        if (!payment.getPaymentStatus().equals("INITIATED")) {
+        if (!payment.getPaymentStatus().equals(PaymentStatus.INITIATED)) {
             throw new PaymentException("Payment is not in progress");
         }
 
@@ -197,10 +199,10 @@ public class PaymentServiceImpl implements PaymentService {
             inventoryRepository.save(inventory);
         }
 
-        payment.setPaymentStatus("FAILED");
+        payment.setPaymentStatus(PaymentStatus.FAILED);
         payment.setFailureReason(failureReason);
 
-        order.setPaymentStatus("FAILED");
+        order.setPaymentStatus(PaymentStatus.FAILED);
 
         paymentRepository.save(payment);
         orderRepository.save(order);

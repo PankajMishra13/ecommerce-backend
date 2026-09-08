@@ -1,5 +1,6 @@
 package ecommerce_backend.dto;
 
+import ecommerce_backend.enums.PaymentMethod;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -14,6 +15,6 @@ public class PaymentRequestDto {
     @NotNull
     private Long orderId;
 
-    @NotBlank
-    private String paymentMethod;
+    @NotNull
+    private PaymentMethod paymentMethod;
 }

@@ -1,5 +1,6 @@
 package ecommerce_backend.entity;
 
+import ecommerce_backend.enums.CartStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -24,8 +25,9 @@ public class Cart {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Enumerated(EnumType.STRING)
     @Column(length = 20)
-    private String status;
+    private CartStatus status;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

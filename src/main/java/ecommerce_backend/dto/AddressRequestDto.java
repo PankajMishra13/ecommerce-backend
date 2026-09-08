@@ -1,6 +1,8 @@
 package ecommerce_backend.dto;
 
+import ecommerce_backend.enums.AddressType;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -11,9 +13,8 @@ import lombok.*;
 @Builder
 public class AddressRequestDto {
 
-    @NotBlank(message = "Address type is required")
-    @Size(max = 20, message = "Address type must not exceed 20 characters")
-    private String addressType;
+    @NotNull(message = "Address type is required")
+    private AddressType addressType;
 
     @NotBlank(message = "Full name is required")
     @Size(max = 100, message = "Full name must not exceed 100 characters")

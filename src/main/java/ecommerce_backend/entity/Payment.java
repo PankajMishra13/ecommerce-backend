@@ -1,5 +1,7 @@
 package ecommerce_backend.entity;
 
+import ecommerce_backend.enums.PaymentMethod;
+import ecommerce_backend.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -24,11 +26,13 @@ public class Payment {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", length = 30, nullable = false)
-    private String paymentMethod;
+    private PaymentMethod paymentMethod;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "payment_status", length = 30, nullable = false)
-    private String paymentStatus;
+    private PaymentStatus paymentStatus;
 
     @Column(name = "transaction_id", length = 100, unique = true)
     private String transactionId;

@@ -1,5 +1,7 @@
 package ecommerce_backend.entity;
 
+import ecommerce_backend.enums.OrderStatus;
+import ecommerce_backend.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -28,11 +30,13 @@ public class Order {
     @Column(name = "order_number", length = 50, nullable = false, unique = true)
     private String orderNumber;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "order_status", length = 30, nullable = false)
-    private String orderStatus;
+    private OrderStatus orderStatus;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "payment_status", length = 30, nullable = false)
-    private String paymentStatus;
+    private PaymentStatus paymentStatus;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal subtotal;

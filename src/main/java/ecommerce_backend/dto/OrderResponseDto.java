@@ -1,5 +1,7 @@
 package ecommerce_backend.dto;
 
+import ecommerce_backend.enums.OrderStatus;
+import ecommerce_backend.enums.PaymentStatus;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -18,8 +20,8 @@ public class OrderResponseDto {
 
     private Long userId;
 
-    private String orderStatus;
-    private String paymentStatus;
+    private OrderStatus orderStatus;
+    private PaymentStatus paymentStatus;
 
     private BigDecimal subtotal;
     private BigDecimal discountAmount;

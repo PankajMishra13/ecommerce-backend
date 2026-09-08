@@ -3,6 +3,7 @@ package ecommerce_backend.service;
 import ecommerce_backend.dto.CouponRequestDto;
 import ecommerce_backend.dto.CouponResponseDto;
 import ecommerce_backend.entity.Coupon;
+import ecommerce_backend.enums.DiscountType;
 import ecommerce_backend.exception.CouponException;
 import ecommerce_backend.mapper.CouponMapper;
 import ecommerce_backend.repository.CouponRepository;
@@ -118,14 +119,7 @@ public class CouponServiceImpl implements CouponService {
 
     private void validateCoupon(CouponRequestDto request) {
 
-        if (!request.getDiscountType().equalsIgnoreCase("PERCENTAGE")
-                && !request.getDiscountType().equalsIgnoreCase("FIXED")) {
-
-            throw new CouponException(
-                    "Discount type must be PERCENTAGE or FIXED");
-        }
-
-        if (request.getDiscountType().equalsIgnoreCase("PERCENTAGE")
+        if (request.getDiscountType() == DiscountType.PERCENTAGE
                 && request.getDiscountValue().compareTo(new BigDecimal("100")) > 0) {
 
             throw new CouponException(

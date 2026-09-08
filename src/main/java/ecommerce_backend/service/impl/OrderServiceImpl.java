@@ -4,6 +4,9 @@ import ecommerce_backend.dto.OrderItemResponseDto;
 import ecommerce_backend.dto.OrderRequestDto;
 import ecommerce_backend.dto.OrderResponseDto;
 import ecommerce_backend.entity.*;
+import ecommerce_backend.enums.DiscountType;
+import ecommerce_backend.enums.OrderStatus;
+import ecommerce_backend.enums.PaymentStatus;
 import ecommerce_backend.exception.*;
 import ecommerce_backend.mapper.OrderItemMapper;
 import ecommerce_backend.mapper.OrderMapper;
@@ -144,8 +147,8 @@ public class OrderServiceImpl implements OrderService {
             Order order = Order.builder()
                     .user(user)
                     .orderNumber(orderNumber)
-                    .orderStatus("PENDING")
-                    .paymentStatus("PENDING")
+                    .orderStatus(OrderStatus.PENDING)
+                    .paymentStatus(PaymentStatus.PENDING)
                     .subtotal(subtotal)
                     .discountAmount(discountAmount)
                     .shippingCharge(shippingCharge)
@@ -267,7 +270,7 @@ public class OrderServiceImpl implements OrderService {
             throw new UnauthorizedAccessException("Unauthorized access");
         }
 
-        if (!order.getOrderStatus().equals("PENDING")) {
+        if (!order.getOrderStatus().equals(OrderStatus.PENDING)) {
             throw new OrderCancellationException(
                     "Order cannot be cancelled"
             );
@@ -291,7 +294,7 @@ public class OrderServiceImpl implements OrderService {
             inventoryRepository.save(inventory);
         }
 
-        order.setOrderStatus("CANCELLED");
+        order.setOrderStatus(OrderStatus.PENDING);
 
         orderRepository.save(order);
     }
@@ -303,15 +306,15 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() ->
                         new OrderNotFoundException("Order not found"));
 
-        if (order.getOrderStatus().equals("CONFIRMED")
+        if (order.getOrderStatus().equals(OrderStatus.CONFIRMED)
                 && status.equals("SHIPPED")) {
 
-            order.setOrderStatus("SHIPPED");
+            order.setOrderStatus(OrderStatus.SHIPPED);
 
-        } else if (order.getOrderStatus().equals("SHIPPED")
+        } else if (order.getOrderStatus().equals(OrderStatus.SHIPPED)
                 && status.equals("DELIVERED")) {
 
-            order.setOrderStatus("DELIVERED");
+            order.setOrderStatus(OrderStatus.DELIVERED);
 
         } else {
 
@@ -366,7 +369,7 @@ public class OrderServiceImpl implements OrderService {
 
         BigDecimal discountAmount = BigDecimal.ZERO;
 
-        if (coupon.getDiscountType().equalsIgnoreCase("PERCENTAGE")) {
+        if (coupon.getDiscountType() == DiscountType.PERCENTAGE) {
 
             discountAmount = subtotal
                     .multiply(coupon.getDiscountValue())
@@ -379,7 +382,7 @@ public class OrderServiceImpl implements OrderService {
                 discountAmount = coupon.getMaximumDiscountAmount();
             }
 
-        } else if (coupon.getDiscountType().equalsIgnoreCase("FIXED")) {
+        } else if (coupon.getDiscountType() == DiscountType.FIXED) {
 
             discountAmount = coupon.getDiscountValue();
 
