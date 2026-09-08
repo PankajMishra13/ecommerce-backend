@@ -265,4 +265,30 @@ public class OrderServiceImpl implements OrderService {
 
         orderRepository.save(order);
     }
+
+    @Override
+    public void updateOrderStatus(Long orderId, String status) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() ->
+                        new OrderNotFoundException("Order not found"));
+
+        if (order.getOrderStatus().equals("CONFIRMED")
+                && status.equals("SHIPPED")) {
+
+            order.setOrderStatus("SHIPPED");
+
+        } else if (order.getOrderStatus().equals("SHIPPED")
+                && status.equals("DELIVERED")) {
+
+            order.setOrderStatus("DELIVERED");
+
+        } else {
+
+            throw new OrderStatusException("Invalid order status transition");
+        }
+
+        orderRepository.save(order);
+
+    }
 }

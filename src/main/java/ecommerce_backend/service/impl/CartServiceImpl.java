@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -93,6 +94,9 @@ public class CartServiceImpl implements CartService {
 
         cartItemRepository.save(cartItem);
 
+        cart.setUpdatedAt(LocalDateTime.now());
+        cartRepository.save(cart);
+
         return getMyCart();
     }
 
@@ -114,8 +118,11 @@ public class CartServiceImpl implements CartService {
         }
 
         cartItem.setQuantity(quantity);
-
         cartItemRepository.save(cartItem);
+
+        cart.setUpdatedAt(LocalDateTime.now());
+        cartRepository.save(cart);
+
 
         return getMyCart();
     }
@@ -138,6 +145,9 @@ public class CartServiceImpl implements CartService {
         }
 
         cartItemRepository.delete(cartItem);
+
+        cart.setUpdatedAt(LocalDateTime.now());
+        cartRepository.save(cart);
     }
 
     @Transactional
@@ -152,6 +162,9 @@ public class CartServiceImpl implements CartService {
         List<CartItem> cartItems = cartItemRepository.findByCartId(cart.getId());
 
         cartItemRepository.deleteAll(cartItems);
+
+        cart.setUpdatedAt(LocalDateTime.now());
+        cartRepository.save(cart);
     }
 
     private User getCurrentUser() {

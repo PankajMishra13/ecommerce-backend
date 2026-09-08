@@ -157,6 +157,7 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setPaymentCompletedAt(LocalDateTime.now());
 
         order.setPaymentStatus("SUCCESS");
+        order.setOrderStatus("CONFIRMED");
 
         paymentRepository.save(payment);
         orderRepository.save(order);

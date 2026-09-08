@@ -204,6 +204,24 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
+    @ExceptionHandler(ReviewException.class)
+    public ResponseEntity<Map<String, String>> handleReviewException(
+            ReviewException ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(OrderStatusException.class)
+    public ResponseEntity<Map<String, String>> handleOrderStatusException(
+            OrderStatusException ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
 }
 
 

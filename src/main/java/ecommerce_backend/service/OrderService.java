@@ -14,4 +14,6 @@ public interface OrderService {
     List<OrderResponseDto> getMyOrders();
 
     void cancelOrder(Long orderId);
+
+    void updateOrderStatus(Long orderId, String status);
 }
