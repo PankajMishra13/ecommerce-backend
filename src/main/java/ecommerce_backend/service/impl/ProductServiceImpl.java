@@ -5,9 +5,7 @@ import ecommerce_backend.dto.ProductResponseDto;
 import ecommerce_backend.entity.Brand;
 import ecommerce_backend.entity.Category;
 import ecommerce_backend.entity.Product;
-import ecommerce_backend.exception.BrandNotFoundException;
-import ecommerce_backend.exception.CategoryNotFoundException;
-import ecommerce_backend.exception.ProductNotFoundException;
+import ecommerce_backend.exception.ResourceNotFoundException;
 import ecommerce_backend.mapper.ProductMapper;
 import ecommerce_backend.repository.BrandRepository;
 import ecommerce_backend.repository.CategoryRepository;
@@ -34,7 +32,7 @@ public class ProductServiceImpl implements ProductService {
 
         Category category = categoryRepository.findById(requestDto.getCategoryId())
                 .orElseThrow(() ->
-                        new CategoryNotFoundException(
+                        new ResourceNotFoundException(
                                 "Category not found with id: "
                                         + requestDto.getCategoryId()
                         )
@@ -42,7 +40,7 @@ public class ProductServiceImpl implements ProductService {
 
         Brand brand = brandRepository.findById(requestDto.getBrandId())
                 .orElseThrow(() ->
-                        new BrandNotFoundException(
+                        new ResourceNotFoundException(
                                 "Brand not found with id: "
                                         + requestDto.getBrandId()
                         )
@@ -73,13 +71,13 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = productRepository.findById(id)
                 .orElseThrow(() ->
-                        new ProductNotFoundException(
+                        new ResourceNotFoundException(
                                 "Product not found with id: " + id
                         )
                 );
 
         if (Boolean.TRUE.equals(product.getIsDeleted())) {
-            throw new ProductNotFoundException(
+            throw new ResourceNotFoundException(
                     "Product not found with id: " + id
             );
         }
@@ -93,13 +91,13 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = productRepository.findById(id)
                 .orElseThrow(() ->
-                        new ProductNotFoundException(
+                        new ResourceNotFoundException(
                                 "Product not found with id: " + id
                         )
                 );
 
         if (Boolean.TRUE.equals(product.getIsDeleted())) {
-            throw new ProductNotFoundException(
+            throw new ResourceNotFoundException(
                     "Product not found with id: " + id
             );
         }
@@ -107,7 +105,7 @@ public class ProductServiceImpl implements ProductService {
         Category category = categoryRepository.findById(
                 requestDto.getCategoryId()
         ).orElseThrow(() ->
-                new CategoryNotFoundException(
+                new ResourceNotFoundException(
                         "Category not found with id: "
                                 + requestDto.getCategoryId()
                 )
@@ -116,7 +114,7 @@ public class ProductServiceImpl implements ProductService {
         Brand brand = brandRepository.findById(
                 requestDto.getBrandId()
         ).orElseThrow(() ->
-                new BrandNotFoundException(
+                new ResourceNotFoundException(
                         "Brand not found with id: "
                                 + requestDto.getBrandId()
                 )
@@ -143,13 +141,13 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = productRepository.findById(id)
                 .orElseThrow(() ->
-                        new ProductNotFoundException(
+                        new ResourceNotFoundException(
                                 "Product not found with id: " + id
                         )
                 );
 
         if (Boolean.TRUE.equals(product.getIsDeleted())) {
-            throw new ProductNotFoundException(
+            throw new ResourceNotFoundException(
                     "Product not found with id: " + id
             );
         }

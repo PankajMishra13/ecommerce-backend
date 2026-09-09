@@ -3,7 +3,7 @@ package ecommerce_backend.service.impl;
 import ecommerce_backend.dto.UserRequestDto;
 import ecommerce_backend.dto.UserResponseDto;
 import ecommerce_backend.entity.User;
-import ecommerce_backend.exception.MobileNumberAlreadyExistsException;
+import ecommerce_backend.exception.ConflictException;
 import ecommerce_backend.mapper.UserMapper;
 import ecommerce_backend.repository.RoleRepository;
 import ecommerce_backend.repository.UserRepository;
@@ -34,11 +34,11 @@ public class UserServiceImpl implements UserService{
     public UserResponseDto createUser(UserRequestDto request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already registered");
+            throw new ConflictException("Email already registered");
         }
 
         if (userRepository.existsByMobile(request.getMobile())) {
-            throw new MobileNumberAlreadyExistsException( "Mobile number already registered"
+            throw new ConflictException( "Mobile number already registered"
             );
 
         }

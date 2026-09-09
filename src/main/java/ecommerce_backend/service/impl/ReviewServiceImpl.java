@@ -5,7 +5,7 @@ import ecommerce_backend.dto.ReviewResponseDto;
 import ecommerce_backend.entity.Product;
 import ecommerce_backend.entity.Review;
 import ecommerce_backend.entity.User;
-import ecommerce_backend.exception.ProductNotFoundException;
+import ecommerce_backend.exception.ResourceNotFoundException;
 import ecommerce_backend.exception.ReviewException;
 import ecommerce_backend.exception.UnauthorizedAccessException;
 import ecommerce_backend.mapper.ReviewMapper;
@@ -38,7 +38,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() ->
-                        new ProductNotFoundException("Product not found"));
+                        new ResourceNotFoundException("Product not found"));
 
         Optional<Review> existingReview =
                 reviewRepository.findByUserIdAndProductId(
@@ -80,7 +80,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         Product product = productRepository.findById(productId)
                 .orElseThrow(() ->
-                        new ProductNotFoundException("Product not found"));
+                        new ResourceNotFoundException("Product not found"));
 
         List<Review> reviews =
                 reviewRepository.findByProductIdAndIsApprovedTrue(product.getId());

@@ -4,14 +4,12 @@ import ecommerce_backend.dto.ProductImageRequestDto;
 import ecommerce_backend.dto.ProductImageResponseDto;
 import ecommerce_backend.entity.Product;
 import ecommerce_backend.entity.ProductImage;
-import ecommerce_backend.exception.ProductImageAlreadyExistsException;
-import ecommerce_backend.exception.ProductImageNotFoundException;
-import ecommerce_backend.exception.ProductNotFoundException;
+import ecommerce_backend.exception.ConflictException;
+import ecommerce_backend.exception.ResourceNotFoundException;
 import ecommerce_backend.mapper.ProductImageMapper;
 import ecommerce_backend.repository.ProductImageRepository;
 import ecommerce_backend.repository.ProductRepository;
 import ecommerce_backend.service.ProductImageService;
-import ecommerce_backend.service.ProductService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -43,7 +41,7 @@ public class ProductImageServiceImpl implements ProductImageService {
 
         ProductImage productImage = productImageRepository.findById(id)
                 .orElseThrow(() ->
-                        new ProductImageNotFoundException("Product image not found"));
+                        new ResourceNotFoundException("Product image not found"));
 
         return productImageMapper.toResponseDto(productImage);
     }
@@ -54,12 +52,12 @@ public class ProductImageServiceImpl implements ProductImageService {
 
         ProductImage productImage = productImageRepository.findById(id)
                 .orElseThrow(() ->
-                        new ProductImageNotFoundException("Product image not found"));
+                        new ResourceNotFoundException("Product image not found"));
 
         Product product = productRepository.findById(
                 request.getProductId()
         ).orElseThrow(() ->
-                new ProductNotFoundException("Product not found"));
+                new ResourceNotFoundException("Product not found"));
 
         Optional<ProductImage> existingImage =
                 productImageRepository.findByProductIdAndDisplayOrder(
@@ -69,7 +67,7 @@ public class ProductImageServiceImpl implements ProductImageService {
         if (existingImage.isPresent()
                 && !existingImage.get().getId().equals(id)) {
 
-            throw new ProductImageAlreadyExistsException(
+            throw new ConflictException(
                     "Image already exists for this product and display order");
         }
 
@@ -104,7 +102,7 @@ public class ProductImageServiceImpl implements ProductImageService {
 
             ProductImage productImage = productImageRepository.findById(id)
                     .orElseThrow(() ->
-                            new ProductImageNotFoundException("Product image not found"));
+                            new ResourceNotFoundException("Product image not found"));
 
             productImageRepository.delete(productImage);
         }
@@ -115,7 +113,7 @@ public class ProductImageServiceImpl implements ProductImageService {
         Product product = productRepository.findById(
                 request.getProductId()
         ).orElseThrow(() ->
-                new ProductNotFoundException("Product not found"));
+                new ResourceNotFoundException("Product not found"));
 
         if (productImageRepository
                 .findByProductIdAndDisplayOrder(
@@ -123,7 +121,7 @@ public class ProductImageServiceImpl implements ProductImageService {
                         request.getDisplayOrder())
                 .isPresent()) {
 
-            throw new ProductImageAlreadyExistsException(
+            throw new ConflictException(
                     "Image already exists for this product and display order");
         }
 

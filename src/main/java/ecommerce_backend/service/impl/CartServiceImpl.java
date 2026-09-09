@@ -8,9 +8,7 @@ import ecommerce_backend.entity.CartItem;
 import ecommerce_backend.entity.Product;
 import ecommerce_backend.entity.User;
 import ecommerce_backend.enums.CartStatus;
-import ecommerce_backend.exception.CartItemNotFoundException;
-import ecommerce_backend.exception.CartNotFoundException;
-import ecommerce_backend.exception.ProductNotFoundException;
+import ecommerce_backend.exception.ResourceNotFoundException;
 import ecommerce_backend.exception.UnauthorizedAccessException;
 import ecommerce_backend.repository.CartItemRepository;
 import ecommerce_backend.repository.CartRepository;
@@ -44,7 +42,7 @@ public class CartServiceImpl implements CartService {
         User user = getCurrentUser();
 
         Cart cart = cartRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new CartNotFoundException("Cart not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
 
         List<CartItem> cartItems = cartItemRepository.findByCartId(cart.getId());
 
@@ -72,7 +70,7 @@ public class CartServiceImpl implements CartService {
                 });
 
         Product product = productRepository.findById(request.getProductId())
-                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
         CartItem cartItem = cartItemRepository
                 .findByCartIdAndProductId(cart.getId(), product.getId())
@@ -108,14 +106,15 @@ public class CartServiceImpl implements CartService {
         User user = getCurrentUser();
 
         Cart cart = cartRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new CartNotFoundException("Cart not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
 
         CartItem cartItem = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() ->
-                        new CartItemNotFoundException("Cart item not found"));
+                        new
+                                ResourceNotFoundException("Cart item not found"));
 
         if (!cartItem.getCart().getId().equals(cart.getId())) {
-            throw new CartItemNotFoundException("Cart item not found");
+            throw new ResourceNotFoundException("Cart item not found");
         }
 
         cartItem.setQuantity(quantity);
@@ -135,14 +134,14 @@ public class CartServiceImpl implements CartService {
         User user = getCurrentUser();
 
         Cart cart = cartRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new CartNotFoundException("Cart not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
 
         CartItem cartItem = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() ->
-                        new CartItemNotFoundException("Cart item not found"));
+                        new ResourceNotFoundException("Cart item not found"));
 
         if (!cartItem.getCart().getId().equals(cart.getId())) {
-            throw new CartItemNotFoundException("Cart item not found");
+            throw new ResourceNotFoundException("Cart item not found");
         }
 
         cartItemRepository.delete(cartItem);
@@ -158,7 +157,7 @@ public class CartServiceImpl implements CartService {
         User user = getCurrentUser();
 
         Cart cart = cartRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new CartNotFoundException("Cart not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
 
         List<CartItem> cartItems = cartItemRepository.findByCartId(cart.getId());
 

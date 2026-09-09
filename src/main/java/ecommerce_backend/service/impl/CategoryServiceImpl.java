@@ -3,8 +3,8 @@ package ecommerce_backend.service.impl;
 import ecommerce_backend.dto.CategoryRequestDto;
 import ecommerce_backend.dto.CategoryResponseDto;
 import ecommerce_backend.entity.Category;
-import ecommerce_backend.exception.CategoryNotFoundException;
 import ecommerce_backend.exception.InvalidCategoryException;
+import ecommerce_backend.exception.ResourceNotFoundException;
 import ecommerce_backend.mapper.CategoryMapper;
 import ecommerce_backend.repository.CategoryRepository;
 import ecommerce_backend.service.CategoryService;
@@ -30,7 +30,7 @@ public class CategoryServiceImpl implements CategoryService {
             Category parentCategory = categoryRepository.findById(
                     requestDto.getParentCategoryId()
             ).orElseThrow(() ->
-                    new CategoryNotFoundException(
+                    new ResourceNotFoundException(
                             "Parent category not found with id: "
                                     + requestDto.getParentCategoryId()
                     )
@@ -60,7 +60,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() ->
-                        new CategoryNotFoundException("Category not found with id: " + id)
+                        new ResourceNotFoundException("Category not found with id: " + id)
                 );
 
         return categoryMapper.toResponseDto(category);
@@ -72,7 +72,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() ->
-                        new CategoryNotFoundException("Category not found with id: " + id)
+                        new ResourceNotFoundException("Category not found with id: " + id)
                 );
 
         category.setName(requestDto.getName());
@@ -89,7 +89,7 @@ public class CategoryServiceImpl implements CategoryService {
             Category parentCategory = categoryRepository.findById(
                     requestDto.getParentCategoryId()
             ).orElseThrow(() ->
-                    new CategoryNotFoundException("Parent category not found with id: "
+                    new ResourceNotFoundException("Parent category not found with id: "
                             + requestDto.getParentCategoryId())
             );
 
@@ -109,7 +109,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() ->
-                        new CategoryNotFoundException("Category not found with id: " + id)
+                        new ResourceNotFoundException("Category not found with id: " + id)
                 );
 
         if (categoryRepository.existsByParentCategoryId(id)) {

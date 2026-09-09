@@ -57,7 +57,7 @@ public class OrderServiceImpl implements OrderService {
 
         Address address = addressRepository.findById(request.getAddressId())
                 .orElseThrow(() ->
-                        new AddressNotFoundException("Address not found"));
+                        new ResourceNotFoundException("Address not found"));
 
         if (!address.getUser().getId().equals(user.getId())) {
             throw new UnauthorizedAccessException("Unauthorized access");
@@ -65,7 +65,7 @@ public class OrderServiceImpl implements OrderService {
 
         Cart cart = cartRepository.findByUserId(user.getId())
                 .orElseThrow(() ->
-                        new CartNotFoundException("Cart not found"));
+                        new ResourceNotFoundException("Cart not found"));
 
         List<CartItem> cartItems = cartItemRepository.findByCartId(cart.getId());
 
@@ -80,7 +80,7 @@ public class OrderServiceImpl implements OrderService {
             Inventory inventory = inventoryRepository
                     .findByProductId(product.getId())
                     .orElseThrow(() ->
-                            new InventoryNotFoundException("Inventory not found"));
+                            new ResourceNotFoundException("Inventory not found"));
 
             int availableQuantity =
                     inventory.getQuantity() - inventory.getReservedQuantity();
@@ -99,7 +99,7 @@ public class OrderServiceImpl implements OrderService {
                 Inventory inventory = inventoryRepository
                         .findByProductId(reservedProduct.getId())
                         .orElseThrow(() ->
-                                new InventoryNotFoundException("Inventory not found"));
+                                new ResourceNotFoundException("Inventory not found"));
 
                 inventory.setReservedQuantity(
                         inventory.getReservedQuantity()
@@ -217,7 +217,7 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() ->
-                        new OrderNotFoundException("Order not found"));
+                        new ResourceNotFoundException("Order not found"));
 
         if (!order.getUser().getId().equals(user.getId())) {
             throw new UnauthorizedAccessException("Unauthorized access");
@@ -264,7 +264,7 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() ->
-                        new OrderNotFoundException("Order not found"));
+                        new ResourceNotFoundException("Order not found"));
 
         if (!order.getUser().getId().equals(user.getId())) {
             throw new UnauthorizedAccessException("Unauthorized access");
@@ -284,7 +284,7 @@ public class OrderServiceImpl implements OrderService {
             Inventory inventory = inventoryRepository
                     .findByProductId(orderItem.getProduct().getId())
                     .orElseThrow(() ->
-                            new InventoryNotFoundException("Inventory not found"));
+                            new ResourceNotFoundException("Inventory not found"));
 
             inventory.setReservedQuantity(
                     inventory.getReservedQuantity()
@@ -304,7 +304,7 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() ->
-                        new OrderNotFoundException("Order not found"));
+                        new ResourceNotFoundException("Order not found"));
 
         if (order.getOrderStatus().equals(OrderStatus.CONFIRMED)
                 && status.equals("SHIPPED")) {

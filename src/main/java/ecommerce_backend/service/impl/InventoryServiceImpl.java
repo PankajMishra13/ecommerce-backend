@@ -5,9 +5,8 @@ import ecommerce_backend.dto.InventoryResponseDto;
 import ecommerce_backend.dto.InventoryUpdateRequestDto;
 import ecommerce_backend.entity.Inventory;
 import ecommerce_backend.entity.Product;
-import ecommerce_backend.exception.InventoryAlreadyExistsException;
-import ecommerce_backend.exception.InventoryNotFoundException;
-import ecommerce_backend.exception.ProductNotFoundException;
+import ecommerce_backend.exception.ConflictException;
+import ecommerce_backend.exception.ResourceNotFoundException;
 import ecommerce_backend.mapper.InventoryMapper;
 import ecommerce_backend.repository.InventoryRepository;
 import ecommerce_backend.repository.ProductRepository;
@@ -29,10 +28,10 @@ public class InventoryServiceImpl implements InventoryService {
     public InventoryResponseDto createInventory(InventoryRequestDto request) {
 
         Product product = productRepository.findById(request.getProductId())
-                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
         if (inventoryRepository.findByProductId(request.getProductId()).isPresent()) {
-            throw new InventoryAlreadyExistsException("Inventory already exists for this product");
+            throw new ConflictException("Inventory already exists for this product");
         }
 
         Inventory inventory = inventoryMapper.toEntity(request);
@@ -59,7 +58,7 @@ public class InventoryServiceImpl implements InventoryService {
 
         Inventory inventory = inventoryRepository.findById(id)
                 .orElseThrow(() ->
-                        new InventoryNotFoundException("Inventory not found"));
+                        new ResourceNotFoundException("Inventory not found"));
 
         return inventoryMapper.toResponseDto(inventory);
     }
@@ -71,7 +70,7 @@ public class InventoryServiceImpl implements InventoryService {
 
         Inventory inventory = inventoryRepository.findById(id)
                 .orElseThrow(() ->
-                        new InventoryNotFoundException("Inventory not found"));
+                        new ResourceNotFoundException("Inventory not found"));
 
         inventory.setQuantity(request.getQuantity());
 
@@ -89,7 +88,7 @@ public class InventoryServiceImpl implements InventoryService {
 
         Inventory inventory = inventoryRepository.findById(id)
                 .orElseThrow(() ->
-                        new InventoryNotFoundException("Inventory not found"));
+                        new ResourceNotFoundException("Inventory not found"));
 
         inventoryRepository.delete(inventory);
 

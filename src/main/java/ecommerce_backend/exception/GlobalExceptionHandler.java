@@ -1,249 +1,163 @@
 package ecommerce_backend.exception;
 
+import ecommerce_backend.dto.ErrorResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<Map<String, String>> handleInvalidCredentials(
-            InvalidCredentialsException ex){
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handleResourceNotFound(
+            ResourceNotFoundException ex) {
 
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of("message", ex.getMessage()));
-          }
-
-    @ExceptionHandler(MobileNumberAlreadyExistsException.class)
-    public ResponseEntity<Map<String, String>> handleMobileNumberAlreadyExists(
-            MobileNumberAlreadyExistsException ex) {
-
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(Map.of("message", ex.getMessage()));
+        return buildErrorResponse(
+                HttpStatus.NOT_FOUND,
+                ex.getMessage()
+        );
     }
 
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponseDto> handleConflict(
+            ConflictException ex) {
+
+        return buildErrorResponse(
+                HttpStatus.CONFLICT,
+                ex.getMessage()
+        );
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ErrorResponseDto> handleInvalidCredentials(
+            InvalidCredentialsException ex){
+
+        return buildErrorResponse(
+                HttpStatus.UNAUTHORIZED,
+                ex.getMessage());
+          }
+
     @ExceptionHandler(InvalidRefreshTokenException.class)
-    public ResponseEntity<Map<String, String>> handleInvalidRefreshToken(
+    public ResponseEntity<ErrorResponseDto> handleInvalidRefreshToken(
             InvalidRefreshTokenException ex) {
 
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of("message", ex.getMessage()));
+        return buildErrorResponse(
+                HttpStatus.UNAUTHORIZED,
+                ex.getMessage());
     }
 
     @ExceptionHandler(UnauthorizedAccessException.class)
-    public ResponseEntity<Map<String, String>> handleUnauthorizedAccess(
+    public ResponseEntity<ErrorResponseDto> handleUnauthorizedAccess(
             UnauthorizedAccessException ex) {
 
-        return ResponseEntity
-                .status(HttpStatus.FORBIDDEN)
-                .body(Map.of("message", ex.getMessage()));
-    }
-
-    @ExceptionHandler(CategoryNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleCategoryNotFound(
-            CategoryNotFoundException ex) {
-
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(Map.of("message", ex.getMessage()));
+        return buildErrorResponse(
+                HttpStatus.FORBIDDEN,
+                ex.getMessage());
     }
 
     @ExceptionHandler(InvalidCategoryException.class)
-    public ResponseEntity<Map<String, String>> handleInvalidCategory(
+    public ResponseEntity<ErrorResponseDto> handleInvalidCategory(
             InvalidCategoryException ex) {
 
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("message", ex.getMessage()));
-    }
-
-    @ExceptionHandler(BrandNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleBrandNotFound(
-            BrandNotFoundException ex) {
-
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(Map.of("message", ex.getMessage()));
-    }
-
-    @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleProductNotFound(
-            ProductNotFoundException ex) {
-
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(Map.of("message", ex.getMessage()));
-    }
-
-    @ExceptionHandler(InventoryNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleInventoryNotFound(
-            InventoryNotFoundException ex) {
-
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(Map.of("message", ex.getMessage()));
-    }
-
-    @ExceptionHandler(InventoryAlreadyExistsException.class)
-    public ResponseEntity<Map<String, String>> handleInventoryAlreadyExists(
-            InventoryAlreadyExistsException ex) {
-
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(Map.of("message", ex.getMessage()));
-    }
-
-    @ExceptionHandler(ProductImageAlreadyExistsException.class)
-    public ResponseEntity<Map<String, String>> handleProductImageAlreadyExists(
-            ProductImageAlreadyExistsException ex) {
-
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(Map.of("message", ex.getMessage()));
-    }
-
-    @ExceptionHandler(ProductImageNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleProductImageNotFound(
-            ProductImageNotFoundException ex) {
-
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(Map.of("message", ex.getMessage()));
-    }
-
-    @ExceptionHandler(ProductSpecificationAlreadyExistsException.class)
-    public ResponseEntity<Map<String, String>> handleProductSpecificationAlreadyExists(
-            ProductSpecificationAlreadyExistsException ex) {
-
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(Map.of("message", ex.getMessage()));
-    }
-
-    @ExceptionHandler(ProductSpecificationNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleProductSpecificationNotFound(
-            ProductSpecificationNotFoundException ex) {
-
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(Map.of("message", ex.getMessage()));
-    }
-
-    @ExceptionHandler(CartNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleCartNotFound(
-            CartNotFoundException ex) {
-
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(Map.of("message", ex.getMessage()));
-    }
-
-    @ExceptionHandler(CartItemNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleCartItemNotFound(
-            CartItemNotFoundException ex) {
-
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(Map.of("message", ex.getMessage()));
-    }
-
-    @ExceptionHandler(AddressNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleAddressNotFound(
-            AddressNotFoundException ex) {
-
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(Map.of("error", ex.getMessage()));
-    }
-
-    @ExceptionHandler(OrderNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleOrderNotFound(
-            OrderNotFoundException ex) {
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of("error", ex.getMessage()));
+        return buildErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage());
     }
 
     @ExceptionHandler(EmptyCartException.class)
-    public ResponseEntity<Map<String, String>> handleEmptyCart(
+    public ResponseEntity<ErrorResponseDto> handleEmptyCart(
             EmptyCartException ex) {
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", ex.getMessage()));
+        return buildErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage());
     }
 
     @ExceptionHandler(InsufficientStockException.class)
-    public ResponseEntity<Map<String, String>> handleInsufficientStock(
+    public ResponseEntity<ErrorResponseDto> handleInsufficientStock(
             InsufficientStockException ex) {
 
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(Map.of("error", ex.getMessage()));
+        return buildErrorResponse(
+                HttpStatus.CONFLICT,
+                ex.getMessage());
     }
 
     @ExceptionHandler(OrderCancellationException.class)
-    public ResponseEntity<Map<String, String>> handleOrderCancellation(
+    public ResponseEntity<ErrorResponseDto> handleOrderCancellation(
             OrderCancellationException ex) {
 
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(Map.of("error", ex.getMessage()));
+        return buildErrorResponse(
+                HttpStatus.CONFLICT,
+                ex.getMessage());
     }
 
     @ExceptionHandler(PaymentException.class)
-    public ResponseEntity<Map<String, String>> handlePaymentException(
+    public ResponseEntity<ErrorResponseDto> handlePaymentException(
             PaymentException ex) {
 
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(Map.of("error", ex.getMessage()));
+        return buildErrorResponse(
+                HttpStatus.CONFLICT,
+                ex.getMessage());
     }
 
     @ExceptionHandler(ReviewException.class)
-    public ResponseEntity<Map<String, String>> handleReviewException(
+    public ResponseEntity<ErrorResponseDto> handleReviewException(
             ReviewException ex) {
 
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(Map.of("error", ex.getMessage()));
+        return buildErrorResponse(
+                HttpStatus.CONFLICT,
+                ex.getMessage());
     }
 
     @ExceptionHandler(OrderStatusException.class)
-    public ResponseEntity<Map<String, String>> handleOrderStatusException(
+    public ResponseEntity<ErrorResponseDto> handleOrderStatusException(
             OrderStatusException ex) {
 
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(Map.of("error", ex.getMessage()));
+        return buildErrorResponse(
+                HttpStatus.CONFLICT,
+                ex.getMessage());
     }
 
     @ExceptionHandler(CouponException.class)
-    public ResponseEntity<Map<String, String>> handleCouponException(
+    public ResponseEntity<ErrorResponseDto> handleCouponException(
             CouponException ex) {
 
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(Map.of("error", ex.getMessage()));
+        return buildErrorResponse(
+                HttpStatus.CONFLICT,
+                ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationException(
+    public ResponseEntity<ErrorResponseDto> handleValidationException(
             MethodArgumentNotValidException ex) {
 
-        String message = ex.getBindingResult()
+        Map<String, String> errors = new HashMap<>();
+
+        ex.getBindingResult()
                 .getFieldErrors()
-                .get(0)
-                .getDefaultMessage();
+                .forEach(error ->
+                        errors.put(
+                                error.getField(),
+                                error.getDefaultMessage()
+                        )
+                );
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("message", message));
+                .body(new ErrorResponseDto("Validation failed", errors));
+    }
+
+    private ResponseEntity<ErrorResponseDto> buildErrorResponse(
+            HttpStatus status, String message) {
+
+        return ResponseEntity
+                .status(status)
+                .body(new ErrorResponseDto(message, null));
     }
 
 }

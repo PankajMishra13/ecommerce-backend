@@ -5,9 +5,8 @@ import ecommerce_backend.dto.PaymentResponseDto;
 import ecommerce_backend.entity.*;
 import ecommerce_backend.enums.OrderStatus;
 import ecommerce_backend.enums.PaymentStatus;
-import ecommerce_backend.exception.InventoryNotFoundException;
-import ecommerce_backend.exception.OrderNotFoundException;
 import ecommerce_backend.exception.PaymentException;
+import ecommerce_backend.exception.ResourceNotFoundException;
 import ecommerce_backend.exception.UnauthorizedAccessException;
 import ecommerce_backend.mapper.PaymentMapper;
 import ecommerce_backend.repository.*;
@@ -39,7 +38,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         Order order = orderRepository.findById(request.getOrderId())
                 .orElseThrow(() ->
-                        new OrderNotFoundException("Order not found"));
+                        new ResourceNotFoundException("Order not found"));
 
         if (!order.getUser().getId().equals(user.getId())) {
             throw new UnauthorizedAccessException("Unauthorized access");
@@ -79,7 +78,7 @@ public class PaymentServiceImpl implements PaymentService {
                 Inventory inventory = inventoryRepository
                         .findByProductId(orderItem.getProduct().getId())
                         .orElseThrow(() ->
-                                new InventoryNotFoundException("Inventory not found"));
+                                new ResourceNotFoundException("Inventory not found"));
 
                 int availableQuantity =
                         inventory.getQuantity() - inventory.getReservedQuantity();
@@ -138,7 +137,7 @@ public class PaymentServiceImpl implements PaymentService {
             Inventory inventory = inventoryRepository
                     .findByProductId(orderItem.getProduct().getId())
                     .orElseThrow(() ->
-                            new InventoryNotFoundException("Inventory not found"));
+                            new ResourceNotFoundException("Inventory not found"));
 
             if (inventory.getReservedQuantity() < orderItem.getQuantity()) {
                 throw new PaymentException("Insufficient reserved stock for payment completion");
@@ -186,7 +185,7 @@ public class PaymentServiceImpl implements PaymentService {
             Inventory inventory = inventoryRepository
                     .findByProductId(orderItem.getProduct().getId())
                     .orElseThrow(() ->
-                            new InventoryNotFoundException("Inventory not found"));
+                            new ResourceNotFoundException("Inventory not found"));
 
             if (inventory.getReservedQuantity() < orderItem.getQuantity()) {
                 throw new PaymentException("Insufficient reserved stock for payment failure");
@@ -217,7 +216,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() ->
-                        new OrderNotFoundException("Order not found"));
+                        new ResourceNotFoundException("Order not found"));
 
         if (!order.getUser().getId().equals(user.getId())) {
             throw new UnauthorizedAccessException("Unauthorized access");

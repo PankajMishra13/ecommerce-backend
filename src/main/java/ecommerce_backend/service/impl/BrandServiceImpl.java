@@ -3,7 +3,7 @@ package ecommerce_backend.service.impl;
 import ecommerce_backend.dto.BrandRequestDto;
 import ecommerce_backend.dto.BrandResponseDto;
 import ecommerce_backend.entity.Brand;
-import ecommerce_backend.exception.BrandNotFoundException;
+import ecommerce_backend.exception.ResourceNotFoundException;
 import ecommerce_backend.mapper.BrandMapper;
 import ecommerce_backend.repository.BrandRepository;
 import ecommerce_backend.service.BrandService;
@@ -43,7 +43,7 @@ public class BrandServiceImpl implements BrandService {
 
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() ->
-                        new BrandNotFoundException("Brand not found with id: " + id
+                        new ResourceNotFoundException("Brand not found with id: " + id
                         )
                 );
 
@@ -55,7 +55,7 @@ public class BrandServiceImpl implements BrandService {
 
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() ->
-                        new BrandNotFoundException("Brand not found with id: " + id
+                        new ResourceNotFoundException("Brand not found with id: " + id
                         )
                 );
 
@@ -75,7 +75,7 @@ public class BrandServiceImpl implements BrandService {
 
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() ->
-                        new BrandNotFoundException(
+                        new ResourceNotFoundException(
                                 "Brand not found with id: " + id
                         )
                 );

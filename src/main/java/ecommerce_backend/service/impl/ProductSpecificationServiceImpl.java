@@ -4,9 +4,8 @@ import ecommerce_backend.dto.ProductSpecificationRequestDto;
 import ecommerce_backend.dto.ProductSpecificationResponseDto;
 import ecommerce_backend.entity.Product;
 import ecommerce_backend.entity.ProductSpecification;
-import ecommerce_backend.exception.ProductNotFoundException;
-import ecommerce_backend.exception.ProductSpecificationAlreadyExistsException;
-import ecommerce_backend.exception.ProductSpecificationNotFoundException;
+import ecommerce_backend.exception.ConflictException;
+import ecommerce_backend.exception.ResourceNotFoundException;
 import ecommerce_backend.mapper.ProductSpecificationMapper;
 import ecommerce_backend.repository.ProductRepository;
 import ecommerce_backend.repository.ProductSpecificationRepository;
@@ -34,7 +33,7 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
         Product product = productRepository.findById(
                 request.getProductId()
         ).orElseThrow(() ->
-                new ProductNotFoundException("Product not found"));
+                new ResourceNotFoundException("Product not found"));
 
         if (productSpecificationRepository
                 .findByProductIdAndDisplayOrder(
@@ -42,7 +41,7 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
                         request.getDisplayOrder())
                 .isPresent()) {
 
-            throw new ProductSpecificationAlreadyExistsException(
+            throw new ConflictException(
                     "Specification already exists for this product and display order");
         }
 
@@ -75,7 +74,7 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
         ProductSpecification productSpecification =
                 productSpecificationRepository.findById(id)
                         .orElseThrow(() ->
-                                new ProductSpecificationNotFoundException(
+                                new ResourceNotFoundException(
                                         "Product specification not found"));
 
         return productSpecificationMapper.toResponseDto(productSpecification);
@@ -90,13 +89,13 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
         ProductSpecification productSpecification =
                 productSpecificationRepository.findById(id)
                         .orElseThrow(() ->
-                                new ProductSpecificationNotFoundException(
+                                new ResourceNotFoundException(
                                         "Product specification not found"));
 
         Product product = productRepository.findById(
                 request.getProductId()
         ).orElseThrow(() ->
-                new ProductNotFoundException("Product not found"));
+                new ResourceNotFoundException("Product not found"));
 
         Optional<ProductSpecification> existingSpecification =
                 productSpecificationRepository.findByProductIdAndDisplayOrder(
@@ -106,7 +105,7 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
         if (existingSpecification.isPresent()
                 && !existingSpecification.get().getId().equals(id)) {
 
-            throw new ProductSpecificationAlreadyExistsException(
+            throw new ConflictException(
                     "Specification already exists for this product and display order");
         }
 
@@ -131,7 +130,7 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
         ProductSpecification productSpecification =
                 productSpecificationRepository.findById(id)
                         .orElseThrow(() ->
-                                new ProductSpecificationNotFoundException(
+                                new ResourceNotFoundException(
                                         "Product specification not found"));
 
         productSpecificationRepository.delete(productSpecification);
