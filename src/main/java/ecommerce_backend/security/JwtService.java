@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import io.jsonwebtoken.security.Keys;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 
@@ -20,7 +21,8 @@ public class JwtService {
     private long accessTokenExpiration;
 
     private SecretKey getSigningKey(){
-        return Keys.hmacShaKeyFor(secretKey.getBytes());
+
+        return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
     public String generateToken(String email){

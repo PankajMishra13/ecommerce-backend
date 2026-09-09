@@ -29,11 +29,13 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("User not found"));
 
+        LocalDateTime now = LocalDateTime.now();
+
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(user)
                 .token(UUID.randomUUID().toString())
-                .expiresAt(LocalDateTime.now().plusDays(7))
-                .createdAt(LocalDateTime.now())
+                .expiresAt(now.plusDays(7))
+                .createdAt(now)
                 .revoked(false)
                 .build();
 
