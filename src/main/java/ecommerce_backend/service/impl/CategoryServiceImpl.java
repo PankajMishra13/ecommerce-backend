@@ -10,6 +10,7 @@ import ecommerce_backend.repository.CategoryRepository;
 import ecommerce_backend.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class CategoryServiceImpl implements CategoryService {
 
 
     @Override
+    @Transactional
     public CategoryResponseDto createCategory(CategoryRequestDto requestDto) {
 
         Category category = categoryMapper.toEntity(requestDto);
@@ -68,6 +70,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryResponseDto updateCategory(Long id, CategoryRequestDto requestDto) {
 
         Category category = categoryRepository.findById(id)
@@ -105,6 +108,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void deleteCategory(Long id) {
 
         Category category = categoryRepository.findById(id)

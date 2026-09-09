@@ -11,27 +11,20 @@ import ecommerce_backend.repository.UserRepository;
 import ecommerce_backend.security.JwtService;
 import ecommerce_backend.service.AuthService;
 import ecommerce_backend.service.RefreshTokenService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ecommerce_backend.exception.InvalidCredentialsException;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
-
-    public AuthServiceImpl(UserRepository userRepository,
-                           PasswordEncoder passwordEncoder,
-                           JwtService jwtService,
-                           RefreshTokenService refreshTokenService){
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtService = jwtService;
-        this.refreshTokenService = refreshTokenService;
-    }
 
     @Override
     public LoginResponseDto login(LoginRequestDto request) {
@@ -60,6 +53,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
     @Override
+    @Transactional
     public LoginResponseDto refreshToken(RefreshTokenRequestDto request) {
 
         RefreshToken oldRefreshToken =

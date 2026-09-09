@@ -294,11 +294,12 @@ public class OrderServiceImpl implements OrderService {
             inventoryRepository.save(inventory);
         }
 
-        order.setOrderStatus(OrderStatus.PENDING);
+        order.setOrderStatus(OrderStatus.CANCELLED);
 
         orderRepository.save(order);
     }
 
+    @Transactional
     @Override
     public void updateOrderStatus(Long orderId, String status) {
 

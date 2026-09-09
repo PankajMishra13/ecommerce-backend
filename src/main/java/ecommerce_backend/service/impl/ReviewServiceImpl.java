@@ -17,6 +17,7 @@ import ecommerce_backend.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +32,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewMapper reviewMapper;
     private final OrderItemRepository orderItemRepository;
 
+    @Transactional
     @Override
     public ReviewResponseDto createReview(ReviewRequestDto request) {
 
@@ -108,6 +110,7 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewMapper.toResponseDto(review);
     }
 
+    @Transactional
     @Override
     public ReviewResponseDto updateReview(Long reviewId, ReviewRequestDto request) {
 
@@ -131,6 +134,7 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewMapper.toResponseDto(review);
     }
 
+    @Transactional
     @Override
     public void deleteReview(Long reviewId) {
 
@@ -147,6 +151,7 @@ public class ReviewServiceImpl implements ReviewService {
         reviewRepository.delete(review);
     }
 
+    @Transactional
     @Override
     public ReviewResponseDto approveReview(Long reviewId) {
 

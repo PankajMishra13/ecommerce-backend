@@ -9,6 +9,7 @@ import ecommerce_backend.repository.BrandRepository;
 import ecommerce_backend.service.BrandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class BrandServiceImpl implements BrandService {
     private final BrandMapper brandMapper;
 
     @Override
+    @Transactional
     public BrandResponseDto createBrand(BrandRequestDto requestDto) {
 
         Brand brand = brandMapper.toEntity(requestDto);
@@ -51,6 +53,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
+    @Transactional
     public BrandResponseDto updateBrand(Long id, BrandRequestDto requestDto) {
 
         Brand brand = brandRepository.findById(id)
@@ -71,6 +74,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
+    @Transactional
     public void deleteBrand(Long id) {
 
         Brand brand = brandRepository.findById(id)

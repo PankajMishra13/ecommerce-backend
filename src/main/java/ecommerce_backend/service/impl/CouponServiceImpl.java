@@ -1,4 +1,4 @@
-package ecommerce_backend.service;
+package ecommerce_backend.service.impl;
 
 import ecommerce_backend.dto.CouponRequestDto;
 import ecommerce_backend.dto.CouponResponseDto;
@@ -7,8 +7,10 @@ import ecommerce_backend.enums.DiscountType;
 import ecommerce_backend.exception.CouponException;
 import ecommerce_backend.mapper.CouponMapper;
 import ecommerce_backend.repository.CouponRepository;
+import ecommerce_backend.service.CouponService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -21,6 +23,7 @@ public class CouponServiceImpl implements CouponService {
     private final CouponRepository couponRepository;
     private final CouponMapper couponMapper;
 
+    @Transactional
     @Override
     public CouponResponseDto createCoupon(CouponRequestDto request) {
 
@@ -72,6 +75,7 @@ public class CouponServiceImpl implements CouponService {
         return couponMapper.toResponseDto(coupon);
     }
 
+    @Transactional
     @Override
     public CouponResponseDto updateCoupon(
             Long couponId,
@@ -107,6 +111,7 @@ public class CouponServiceImpl implements CouponService {
         return couponMapper.toResponseDto(coupon);
     }
 
+    @Transactional
     @Override
     public void deleteCoupon(Long couponId) {
 

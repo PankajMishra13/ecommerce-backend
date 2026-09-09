@@ -13,6 +13,7 @@ import ecommerce_backend.repository.ProductRepository;
 import ecommerce_backend.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class ProductServiceImpl implements ProductService {
     private final BrandRepository brandRepository;
 
     @Override
+    @Transactional
     public ProductResponseDto createProduct(ProductRequestDto requestDto) {
 
         Product product = productMapper.toEntity(requestDto);
@@ -87,6 +89,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public ProductResponseDto updateProduct(Long id, ProductRequestDto requestDto) {
 
         Product product = productRepository.findById(id)
@@ -137,6 +140,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public void deleteProduct(Long id) {
 
         Product product = productRepository.findById(id)

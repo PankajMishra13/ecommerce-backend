@@ -4,12 +4,17 @@ import ecommerce_backend.dto.AddressRequestDto;
 import ecommerce_backend.dto.AddressResponseDto;
 import ecommerce_backend.entity.Address;
 import ecommerce_backend.entity.User;
+
 import ecommerce_backend.exception.UnauthorizedAccessException;
+import ecommerce_backend.exception.ResourceNotFoundException;
 import ecommerce_backend.mapper.AddressMapper;
 import ecommerce_backend.repository.AddressRepository;
 import ecommerce_backend.repository.UserRepository;
 import ecommerce_backend.service.AddressService;
-import jakarta.transaction.Transactional;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -17,17 +22,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class AddressServiceImpl implements AddressService {
 
     private final AddressRepository addressRepository;
     private final UserRepository userRepository;
-
-
-    public AddressServiceImpl(AddressRepository addressRepository,
-                              UserRepository userRepository) {
-        this.addressRepository = addressRepository;
-        this.userRepository = userRepository;
-    }
 
     @Transactional
     @Override
@@ -40,7 +39,7 @@ public class AddressServiceImpl implements AddressService {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() ->
-                        new RuntimeException("User not found"));
+                        new ResourceNotFoundException("User not found"));
 
         Address address = AddressMapper.toEntity(request);
 
@@ -69,7 +68,7 @@ public class AddressServiceImpl implements AddressService {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() ->
-                        new RuntimeException("User not found"));
+                        new ResourceNotFoundException("User not found"));
 
         List<Address> addresses =
                 addressRepository.findByUser(user);
@@ -89,11 +88,11 @@ public class AddressServiceImpl implements AddressService {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() ->
-                        new RuntimeException("User not found"));
+                        new ResourceNotFoundException("User not found"));
 
         Address address = addressRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("Address not found"));
+                        new ResourceNotFoundException("Address not found"));
 
         if (!address.getUser().getId().equals(user.getId())) {
             throw new UnauthorizedAccessException("You are not allowed to access this address");
@@ -113,11 +112,11 @@ public class AddressServiceImpl implements AddressService {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() ->
-                        new RuntimeException("User not found"));
+                        new ResourceNotFoundException("User not found"));
 
         Address address = addressRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("Address not found"));
+                        new ResourceNotFoundException("Address not found"));
 
 
         if (!address.getUser().getId().equals(user.getId())) {
@@ -167,11 +166,11 @@ public class AddressServiceImpl implements AddressService {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() ->
-                        new RuntimeException("User not found"));
+                        new ResourceNotFoundException("User not found"));
 
         Address address = addressRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("Address not found"));
+                        new ResourceNotFoundException("Address not found"));
 
         if (!address.getUser().getId().equals(user.getId())) {
             throw new UnauthorizedAccessException(

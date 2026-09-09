@@ -11,7 +11,7 @@ import ecommerce_backend.exception.UnauthorizedAccessException;
 import ecommerce_backend.mapper.PaymentMapper;
 import ecommerce_backend.repository.*;
 import ecommerce_backend.service.PaymentService;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;

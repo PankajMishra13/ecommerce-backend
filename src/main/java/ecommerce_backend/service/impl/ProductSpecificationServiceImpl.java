@@ -10,7 +10,7 @@ import ecommerce_backend.mapper.ProductSpecificationMapper;
 import ecommerce_backend.repository.ProductRepository;
 import ecommerce_backend.repository.ProductSpecificationRepository;
 import ecommerce_backend.service.ProductSpecificationService;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -125,6 +125,7 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
     }
 
     @Override
+    @Transactional
     public void deleteProductSpecification(Long id) {
 
         ProductSpecification productSpecification =

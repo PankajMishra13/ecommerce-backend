@@ -10,7 +10,7 @@ import ecommerce_backend.mapper.ProductImageMapper;
 import ecommerce_backend.repository.ProductImageRepository;
 import ecommerce_backend.repository.ProductRepository;
 import ecommerce_backend.service.ProductImageService;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -98,6 +98,7 @@ public class ProductImageServiceImpl implements ProductImageService {
     }
 
     @Override
+    @Transactional
     public void deleteProductImage(Long id) {
 
             ProductImage productImage = productImageRepository.findById(id)

@@ -3,34 +3,31 @@ package ecommerce_backend.service.impl;
 import ecommerce_backend.entity.RefreshToken;
 import ecommerce_backend.entity.User;
 import ecommerce_backend.exception.InvalidRefreshTokenException;
+import ecommerce_backend.exception.ResourceNotFoundException;
 import ecommerce_backend.repository.RefreshTokenRepository;
 import ecommerce_backend.repository.UserRepository;
 import ecommerce_backend.service.RefreshTokenService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
 
-    public RefreshTokenServiceImpl(
-            RefreshTokenRepository refreshTokenRepository,
-            UserRepository userRepository) {
-
-        this.refreshTokenRepository = refreshTokenRepository;
-        this.userRepository = userRepository;
-    }
-
     @Override
+    @Transactional
     public RefreshToken createRefreshToken(Long userId) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->
-                        new RuntimeException("User not found"));
+                        new ResourceNotFoundException("User not found"));
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(user)
@@ -68,6 +65,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
+    @Transactional
     public void revokeRefreshToken(RefreshToken refreshToken) {
         refreshToken.setRevoked(true);
 

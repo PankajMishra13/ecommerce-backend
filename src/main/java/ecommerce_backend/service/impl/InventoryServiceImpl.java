@@ -13,6 +13,7 @@ import ecommerce_backend.repository.ProductRepository;
 import ecommerce_backend.service.InventoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class InventoryServiceImpl implements InventoryService {
     private final InventoryMapper inventoryMapper;
 
     @Override
+    @Transactional
     public InventoryResponseDto createInventory(InventoryRequestDto request) {
 
         Product product = productRepository.findById(request.getProductId())
@@ -64,6 +66,7 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
+    @Transactional
     public InventoryResponseDto updateInventory(
             Long id,
             InventoryUpdateRequestDto request) {
@@ -84,6 +87,7 @@ public class InventoryServiceImpl implements InventoryService {
 
 
     @Override
+    @Transactional
     public void deleteInventory(Long id) {
 
         Inventory inventory = inventoryRepository.findById(id)
