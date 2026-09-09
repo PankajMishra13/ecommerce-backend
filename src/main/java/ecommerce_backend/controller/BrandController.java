@@ -5,6 +5,7 @@ import ecommerce_backend.dto.BrandResponseDto;
 import ecommerce_backend.service.BrandService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,9 +22,9 @@ public class BrandController {
     public ResponseEntity<BrandResponseDto> createBrand(
             @Valid @RequestBody BrandRequestDto requestDto) {
 
-        return ResponseEntity.ok(
-                brandService.createBrand(requestDto)
-        );
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(brandService.createBrand(requestDto));
     }
 
     @GetMapping

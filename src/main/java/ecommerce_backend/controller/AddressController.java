@@ -5,6 +5,7 @@ import ecommerce_backend.dto.AddressRequestDto;
 import ecommerce_backend.dto.AddressResponseDto;
 import ecommerce_backend.service.AddressService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,11 +22,15 @@ public class AddressController {
     }
 
     @PostMapping
-    public AddressResponseDto createAddress(@Valid @RequestBody AddressRequestDto request) {
+    public ResponseEntity<AddressResponseDto> createAddress(
+            @Valid @RequestBody AddressRequestDto request) {
 
-        return addressService.createAddress(request);
+        AddressResponseDto response = addressService.createAddress(request);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
-
     @GetMapping
     public List<AddressResponseDto> getMyAddresses() {
 

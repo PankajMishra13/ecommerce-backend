@@ -6,6 +6,8 @@ import ecommerce_backend.dto.InventoryUpdateRequestDto;
 import ecommerce_backend.service.InventoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,10 +20,15 @@ public class InventoryController {
     private final InventoryService inventoryService;
 
     @PostMapping
-    public InventoryResponseDto createInventory(
+    public ResponseEntity<InventoryResponseDto> createInventory(
             @Valid @RequestBody InventoryRequestDto requestDto) {
 
-        return inventoryService.createInventory(requestDto);
+        InventoryResponseDto response =
+                inventoryService.createInventory(requestDto);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
     @GetMapping
@@ -45,9 +52,11 @@ public class InventoryController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteInventory(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteInventory(@PathVariable Long id) {
 
         inventoryService.deleteInventory(id);
+
+        return ResponseEntity.noContent().build();
     }
 
 }

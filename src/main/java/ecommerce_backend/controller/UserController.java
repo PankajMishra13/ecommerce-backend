@@ -3,9 +3,10 @@ package ecommerce_backend.controller;
 
 import ecommerce_backend.dto.UserRequestDto;
 import ecommerce_backend.dto.UserResponseDto;
-import ecommerce_backend.entity.User;
 import ecommerce_backend.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,7 +32,13 @@ public class UserController {
     }
 
     @PostMapping
-    public UserResponseDto createUser(@Valid @RequestBody UserRequestDto request){
-        return userService.createUser(request);
+    public ResponseEntity<UserResponseDto> createUser(
+            @Valid @RequestBody UserRequestDto request) {
+
+        UserResponseDto response = userService.createUser(request);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 }

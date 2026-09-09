@@ -5,6 +5,7 @@ import ecommerce_backend.dto.PaymentResponseDto;
 import ecommerce_backend.service.PaymentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,9 @@ public class PaymentController {
         PaymentResponseDto response =
                 paymentService.initiatePayment(request);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
     @PutMapping("/{paymentId}/complete")

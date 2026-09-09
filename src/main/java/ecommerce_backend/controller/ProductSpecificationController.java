@@ -4,6 +4,8 @@ import ecommerce_backend.dto.ProductSpecificationRequestDto;
 import ecommerce_backend.dto.ProductSpecificationResponseDto;
 import ecommerce_backend.service.ProductSpecificationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,11 +18,15 @@ public class ProductSpecificationController {
     private final ProductSpecificationService productSpecificationService;
 
     @PostMapping
-    public ProductSpecificationResponseDto createProductSpecification(
+    public ResponseEntity<ProductSpecificationResponseDto> createProductSpecification(
             @RequestBody ProductSpecificationRequestDto request) {
 
-        return productSpecificationService
-                .createProductSpecification(request);
+        ProductSpecificationResponseDto response =
+                productSpecificationService.createProductSpecification(request);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
     @GetMapping
@@ -49,10 +55,11 @@ public class ProductSpecificationController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteProductSpecification(
+    public ResponseEntity<Void> deleteProductSpecification(
             @PathVariable Long id) {
 
-        productSpecificationService
-                .deleteProductSpecification(id);
+        productSpecificationService.deleteProductSpecification(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

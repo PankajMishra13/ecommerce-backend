@@ -3,9 +3,9 @@ package ecommerce_backend.controller;
 import ecommerce_backend.dto.LoginRequestDto;
 import ecommerce_backend.dto.LoginResponseDto;
 import ecommerce_backend.dto.RefreshTokenRequestDto;
-import ecommerce_backend.dto.UserResponseDto;
 import ecommerce_backend.service.AuthService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,10 +34,12 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public void logout(
+    public ResponseEntity<Void> logout(
             @Valid @RequestBody RefreshTokenRequestDto request) {
 
         authService.logout(request);
+
+        return ResponseEntity.noContent().build();
     }
 
 

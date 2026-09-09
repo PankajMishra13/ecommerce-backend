@@ -3,6 +3,8 @@ import ecommerce_backend.dto.ProductImageRequestDto;
 import ecommerce_backend.dto.ProductImageResponseDto;
 import ecommerce_backend.service.ProductImageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,10 +17,15 @@ public class ProductImageController {
     private final ProductImageService productImageService;
 
     @PostMapping
-    public ProductImageResponseDto createProductImage(
+    public ResponseEntity<ProductImageResponseDto> createProductImage(
             @RequestBody ProductImageRequestDto request) {
 
-        return productImageService.createProductImage(request);
+        ProductImageResponseDto response =
+                productImageService.createProductImage(request);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
     @GetMapping
@@ -43,8 +50,10 @@ public class ProductImageController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteProductImage(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteProductImage(@PathVariable Long id) {
 
         productImageService.deleteProductImage(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

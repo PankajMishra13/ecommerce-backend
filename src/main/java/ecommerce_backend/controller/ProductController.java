@@ -5,6 +5,8 @@ import ecommerce_backend.dto.ProductResponseDto;
 import ecommerce_backend.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,10 +19,15 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ProductResponseDto createProduct(
+    public ResponseEntity<ProductResponseDto> createProduct(
             @Valid @RequestBody ProductRequestDto requestDto) {
 
-        return productService.createProduct(requestDto);
+        ProductResponseDto response =
+                productService.createProduct(requestDto);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
     @GetMapping
@@ -44,8 +51,10 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
 
         productService.deleteProduct(id);
+
+        return ResponseEntity.noContent().build();
     }
 }
