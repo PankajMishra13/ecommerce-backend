@@ -7,6 +7,7 @@ import ecommerce_backend.exception.InvalidCategoryException;
 import ecommerce_backend.exception.ResourceNotFoundException;
 import ecommerce_backend.mapper.CategoryMapper;
 import ecommerce_backend.repository.CategoryRepository;
+import ecommerce_backend.repository.ProductRepository;
 import ecommerce_backend.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+    private final ProductRepository productRepository;
 
 
     @Override
@@ -84,17 +86,8 @@ public class CategoryServiceImpl implements CategoryService {
 
         if (requestDto.getParentCategoryId() != null) {
 
-            if (id.equals(requestDto.getParentCategoryId())) {
-                throw new InvalidCategoryException("A category cannot be its own parent"
-                );
-            }
-
-            Category parentCategory = categoryRepository.findById(
-                    requestDto.getParentCategoryId()
-            ).orElseThrow(() ->
-                    new ResourceNotFoundException("Parent category not found with id: "
-                            + requestDto.getParentCategoryId())
-            );
+            Category parentCategory =
+                    validateParentCategory(id, requestDto.getParentCategoryId());
 
             category.setParentCategory(parentCategory);
 
@@ -122,6 +115,37 @@ public class CategoryServiceImpl implements CategoryService {
             );
         }
 
+        if (productRepository.existsByCategoryId(id)) {
+            throw new InvalidCategoryException(
+                    "Cannot delete category because it has products"
+            );
+        }
+
         categoryRepository.delete(category);
+    }
+
+    private Category validateParentCategory(Long categoryId, Long parentCategoryId) {
+
+        Category currentParent = categoryRepository.findById(parentCategoryId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Parent category not found with id: " + parentCategoryId
+                        )
+                );
+
+        Category parentCategory = currentParent;
+
+        while (currentParent != null) {
+
+            if (categoryId.equals(currentParent.getId())) {
+                throw new InvalidCategoryException(
+                        "A category cannot have one of its child categories as parent"
+                );
+            }
+
+            currentParent = currentParent.getParentCategory();
+        }
+
+        return parentCategory;
     }
 }

@@ -4,13 +4,16 @@ import ecommerce_backend.dto.PaymentRequestDto;
 import ecommerce_backend.dto.PaymentResponseDto;
 import ecommerce_backend.service.PaymentService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
@@ -43,7 +46,7 @@ public class PaymentController {
     @PutMapping("/{paymentId}/fail")
     public ResponseEntity<PaymentResponseDto> failPayment(
             @PathVariable Long paymentId,
-            @RequestParam String failureReason) {
+            @RequestParam @NotBlank String failureReason) {
 
         PaymentResponseDto response =
                 paymentService.failPayment(paymentId, failureReason);

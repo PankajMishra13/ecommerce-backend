@@ -2,6 +2,7 @@ package ecommerce_backend.service;
 
 import ecommerce_backend.dto.OrderRequestDto;
 import ecommerce_backend.dto.OrderResponseDto;
+import ecommerce_backend.enums.OrderStatus;
 
 import java.util.List;
 
@@ -15,5 +16,5 @@ public interface OrderService {
 
     void cancelOrder(Long orderId);
 
-    void updateOrderStatus(Long orderId, String status);
+    void updateOrderStatus(Long orderId, OrderStatus status);
 }

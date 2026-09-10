@@ -1,7 +1,6 @@
 package ecommerce_backend.dto;
 
 import ecommerce_backend.enums.PaymentMethod;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 

@@ -29,6 +29,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentMapper paymentMapper;
     private final InventoryRepository inventoryRepository;
     private final OrderItemRepository orderItemRepository;
+    private final CouponRepository couponRepository;
 
     @Override
     @Transactional
@@ -36,9 +37,8 @@ public class PaymentServiceImpl implements PaymentService {
 
         User user = getCurrentUser();
 
-        Order order = orderRepository.findById(request.getOrderId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Order not found"));
+        Order order = orderRepository.findByIdForUpdate(request.getOrderId())
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
         if (!order.getUser().getId().equals(user.getId())) {
             throw new UnauthorizedAccessException("Unauthorized access");
@@ -48,8 +48,7 @@ public class PaymentServiceImpl implements PaymentService {
             throw new PaymentException("Order is not eligible for payment");
         }
 
-        List<Payment> existingPayments =
-                paymentRepository.findByOrderId(order.getId());
+        List<Payment> existingPayments = paymentRepository.findByOrderId(order.getId());
 
         boolean paymentInProgress = existingPayments.stream()
                 .anyMatch(payment ->
@@ -76,7 +75,7 @@ public class PaymentServiceImpl implements PaymentService {
             for (OrderItem orderItem : orderItemRepository.findByOrderId(order.getId())) {
 
                 Inventory inventory = inventoryRepository
-                        .findByProductId(orderItem.getProduct().getId())
+                        .findByProductIdForUpdate(orderItem.getProduct().getId())
                         .orElseThrow(() ->
                                 new ResourceNotFoundException("Inventory not found"));
 
@@ -104,6 +103,9 @@ public class PaymentServiceImpl implements PaymentService {
 
         payment = paymentRepository.save(payment);
 
+        order.setPaymentStatus(PaymentStatus.INITIATED);
+        orderRepository.save(order);
+
         return paymentMapper.toResponseDto(payment);
     }
 
@@ -130,12 +132,14 @@ public class PaymentServiceImpl implements PaymentService {
             throw new PaymentException("Payment is not in progress");
         }
 
-        Order order = payment.getOrder();
+        Order order = orderRepository.findByIdForUpdate(payment.getOrder().getId())
+                .orElseThrow(() ->
+                        new PaymentException("Order not found"));
 
         for (OrderItem orderItem : orderItemRepository.findByOrderId(order.getId())) {
 
             Inventory inventory = inventoryRepository
-                    .findByProductId(orderItem.getProduct().getId())
+                    .findByProductIdForUpdate(orderItem.getProduct().getId())
                     .orElseThrow(() ->
                             new ResourceNotFoundException("Inventory not found"));
 
@@ -152,6 +156,24 @@ public class PaymentServiceImpl implements PaymentService {
             );
 
             inventoryRepository.save(inventory);
+        }
+
+        if (order.getCoupon() != null) {
+            Coupon coupon = couponRepository.findByIdForUpdate(order.getCoupon().getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Coupon not found"));
+
+            if (coupon.getUsageLimit() != null
+                    && coupon.getUsedCount() >= coupon.getUsageLimit()) {
+                throw new PaymentException("Coupon usage limit reached");
+            }
+
+            coupon.setUsedCount(
+                    coupon.getUsedCount() == null
+                            ? 1
+                            : coupon.getUsedCount() + 1
+            );
+
+            couponRepository.save(coupon);
         }
 
         payment.setPaymentStatus(PaymentStatus.SUCCESS);
@@ -178,12 +200,14 @@ public class PaymentServiceImpl implements PaymentService {
             throw new PaymentException("Payment is not in progress");
         }
 
-        Order order = payment.getOrder();
+        Order order = orderRepository.findByIdForUpdate(payment.getOrder().getId())
+                .orElseThrow(() ->
+                        new PaymentException("Order not found"));
 
         for (OrderItem orderItem : orderItemRepository.findByOrderId(order.getId())) {
 
             Inventory inventory = inventoryRepository
-                    .findByProductId(orderItem.getProduct().getId())
+                    .findByProductIdForUpdate(orderItem.getProduct().getId())
                     .orElseThrow(() ->
                             new ResourceNotFoundException("Inventory not found"));
 

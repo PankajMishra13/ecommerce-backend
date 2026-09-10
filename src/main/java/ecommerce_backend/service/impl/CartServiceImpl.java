@@ -8,6 +8,8 @@ import ecommerce_backend.entity.CartItem;
 import ecommerce_backend.entity.Product;
 import ecommerce_backend.entity.User;
 import ecommerce_backend.enums.CartStatus;
+import ecommerce_backend.enums.ProductStatus;
+import ecommerce_backend.exception.ConflictException;
 import ecommerce_backend.exception.ResourceNotFoundException;
 import ecommerce_backend.exception.UnauthorizedAccessException;
 import ecommerce_backend.repository.CartItemRepository;
@@ -59,7 +61,7 @@ public class CartServiceImpl implements CartService {
 
         User user = getCurrentUser();
 
-        Cart cart = cartRepository.findByUserId(user.getId())
+        Cart cart = cartRepository.findByUserIdForUpdate(user.getId())
                 .orElseGet(() -> {
                     Cart newCart = Cart.builder()
                             .user(user)
@@ -69,7 +71,11 @@ public class CartServiceImpl implements CartService {
                     return cartRepository.save(newCart);
                 });
 
-        Product product = productRepository.findById(request.getProductId())
+        Product product = productRepository
+                .findByIdAndIsDeletedFalseAndStatus(
+                        request.getProductId(),
+                        ProductStatus.ACTIVE
+                )
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
         CartItem cartItem = cartItemRepository
@@ -78,11 +84,24 @@ public class CartServiceImpl implements CartService {
 
         if (cartItem != null) {
 
-            cartItem.setQuantity(
-                    cartItem.getQuantity() + request.getQuantity()
-            );
+            int newQuantity =
+                    cartItem.getQuantity() + request.getQuantity();
+
+            if (newQuantity > 10) {
+                throw new ConflictException(
+                        "Maximum 10 units of a product are allowed in the cart"
+                );
+            }
+
+            cartItem.setQuantity(newQuantity);
 
         } else {
+
+            if (request.getQuantity() > 10) {
+                throw new ConflictException(
+                        "Maximum 10 units of a product are allowed in the cart"
+                );
+            }
 
             cartItem = CartItem.builder()
                     .cart(cart)
@@ -105,7 +124,7 @@ public class CartServiceImpl implements CartService {
 
         User user = getCurrentUser();
 
-        Cart cart = cartRepository.findByUserId(user.getId())
+        Cart cart = cartRepository.findByUserIdForUpdate(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
 
         CartItem cartItem = cartItemRepository.findById(cartItemId)
@@ -117,7 +136,14 @@ public class CartServiceImpl implements CartService {
             throw new ResourceNotFoundException("Cart item not found");
         }
 
+        if (quantity > 10) {
+            throw new ConflictException(
+                    "Maximum 10 units of a product are allowed in the cart"
+            );
+        }
+
         cartItem.setQuantity(quantity);
+
         cartItemRepository.save(cartItem);
 
         cart.setUpdatedAt(LocalDateTime.now());
@@ -133,7 +159,7 @@ public class CartServiceImpl implements CartService {
 
         User user = getCurrentUser();
 
-        Cart cart = cartRepository.findByUserId(user.getId())
+        Cart cart = cartRepository.findByUserIdForUpdate(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
 
         CartItem cartItem = cartItemRepository.findById(cartItemId)
@@ -156,7 +182,7 @@ public class CartServiceImpl implements CartService {
 
         User user = getCurrentUser();
 
-        Cart cart = cartRepository.findByUserId(user.getId())
+        Cart cart = cartRepository.findByUserIdForUpdate(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
 
         List<CartItem> cartItems = cartItemRepository.findByCartId(cart.getId());

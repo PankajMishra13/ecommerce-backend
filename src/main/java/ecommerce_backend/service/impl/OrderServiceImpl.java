@@ -7,6 +7,7 @@ import ecommerce_backend.entity.*;
 import ecommerce_backend.enums.DiscountType;
 import ecommerce_backend.enums.OrderStatus;
 import ecommerce_backend.enums.PaymentStatus;
+import ecommerce_backend.enums.ProductStatus;
 import ecommerce_backend.exception.*;
 import ecommerce_backend.mapper.OrderItemMapper;
 import ecommerce_backend.mapper.OrderMapper;
@@ -37,6 +38,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemMapper orderItemMapper;
     private final InventoryRepository inventoryRepository;
     private final CouponRepository couponRepository;
+    private final ProductRepository productRepository;
 
     private User getCurrentUser() {
 
@@ -56,16 +58,14 @@ public class OrderServiceImpl implements OrderService {
         User user = getCurrentUser();
 
         Address address = addressRepository.findById(request.getAddressId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Address not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Address not found"));
 
         if (!address.getUser().getId().equals(user.getId())) {
             throw new UnauthorizedAccessException("Unauthorized access");
         }
 
-        Cart cart = cartRepository.findByUserId(user.getId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Cart not found"));
+        Cart cart = cartRepository.findByUserIdForUpdate(user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
 
         List<CartItem> cartItems = cartItemRepository.findByCartId(cart.getId());
 
@@ -75,10 +75,16 @@ public class OrderServiceImpl implements OrderService {
 
         for (CartItem cartItem : cartItems) {
 
-            Product product = cartItem.getProduct();
+            Product product = productRepository
+                    .findByIdAndIsDeletedFalseAndStatus(
+                            cartItem.getProduct().getId(),
+                            ProductStatus.ACTIVE
+                    )
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Product is no longer available"
+                    ));
 
-            Inventory inventory = inventoryRepository
-                    .findByProductId(product.getId())
+            Inventory inventory = inventoryRepository.findByProductIdForUpdate(product.getId())
                     .orElseThrow(() ->
                             new ResourceNotFoundException("Inventory not found"));
 
@@ -90,26 +96,15 @@ public class OrderServiceImpl implements OrderService {
                         "Insufficient stock for product: " + product.getName()
                 );
             }
+            inventory.setReservedQuantity(
+                    inventory.getReservedQuantity() + cartItem.getQuantity()
+            );
+
+            inventoryRepository.save(inventory);
         }
 
-            for (CartItem cartItem : cartItems) {
 
-                Product reservedProduct = cartItem.getProduct();
-
-                Inventory inventory = inventoryRepository
-                        .findByProductId(reservedProduct.getId())
-                        .orElseThrow(() ->
-                                new ResourceNotFoundException("Inventory not found"));
-
-                inventory.setReservedQuantity(
-                        inventory.getReservedQuantity()
-                                + cartItem.getQuantity()
-                );
-
-                inventoryRepository.save(inventory);
-            }
-
-            BigDecimal subtotal = cartItems.stream()
+        BigDecimal subtotal = cartItems.stream()
                     .map(item -> item.getProduct().getSellingPrice()
                             .multiply(BigDecimal.valueOf(item.getQuantity())))
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -151,6 +146,7 @@ public class OrderServiceImpl implements OrderService {
                     .paymentStatus(PaymentStatus.PENDING)
                     .subtotal(subtotal)
                     .discountAmount(discountAmount)
+                    .coupon(coupon)
                     .shippingCharge(shippingCharge)
                     .totalAmount(totalAmount)
                     .shippingFullName(address.getFullName())
@@ -163,17 +159,6 @@ public class OrderServiceImpl implements OrderService {
                     .build();
 
             order = orderRepository.save(order);
-
-        if (coupon != null) {
-
-            coupon.setUsedCount(
-                    coupon.getUsedCount() == null
-                            ? 1
-                            : coupon.getUsedCount() + 1
-            );
-
-            couponRepository.save(coupon);
-        }
 
             for (CartItem cartItem : cartItems) {
 
@@ -262,18 +247,19 @@ public class OrderServiceImpl implements OrderService {
 
         User user = getCurrentUser();
 
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Order not found"));
+        Order order = orderRepository.findByIdForUpdate(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
         if (!order.getUser().getId().equals(user.getId())) {
             throw new UnauthorizedAccessException("Unauthorized access");
         }
 
         if (!order.getOrderStatus().equals(OrderStatus.PENDING)) {
-            throw new OrderCancellationException(
-                    "Order cannot be cancelled"
-            );
+            throw new OrderCancellationException("Order cannot be cancelled");
+        }
+
+        if (order.getPaymentStatus() == PaymentStatus.INITIATED){
+            throw new OrderCancellationException("Order cannot be cancelled while payment is in progress");
         }
 
         List<OrderItem> orderItems =
@@ -282,9 +268,15 @@ public class OrderServiceImpl implements OrderService {
         for (OrderItem orderItem : orderItems) {
 
             Inventory inventory = inventoryRepository
-                    .findByProductId(orderItem.getProduct().getId())
+                    .findByProductIdForUpdate(orderItem.getProduct().getId())
                     .orElseThrow(() ->
                             new ResourceNotFoundException("Inventory not found"));
+
+            if (inventory.getReservedQuantity() < orderItem.getQuantity()) {
+                throw new OrderCancellationException(
+                        "Invalid reserved stock for product: " + orderItem.getProduct().getName()
+                );
+            }
 
             inventory.setReservedQuantity(
                     inventory.getReservedQuantity()
@@ -301,19 +293,19 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public void updateOrderStatus(Long orderId, String status) {
+    public void updateOrderStatus(Long orderId, OrderStatus  status) {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Order not found"));
 
         if (order.getOrderStatus().equals(OrderStatus.CONFIRMED)
-                && status.equals("SHIPPED")) {
+                && status == OrderStatus.SHIPPED) {
 
             order.setOrderStatus(OrderStatus.SHIPPED);
 
         } else if (order.getOrderStatus().equals(OrderStatus.SHIPPED)
-                && status.equals("DELIVERED")) {
+                && status == OrderStatus.DELIVERED) {
 
             order.setOrderStatus(OrderStatus.DELIVERED);
 

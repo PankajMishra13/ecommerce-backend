@@ -71,9 +71,15 @@ public class InventoryServiceImpl implements InventoryService {
             Long id,
             InventoryUpdateRequestDto request) {
 
-        Inventory inventory = inventoryRepository.findById(id)
+        Inventory inventory = inventoryRepository.findByIdForUpdate(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Inventory not found"));
+
+        if (request.getQuantity() < inventory.getReservedQuantity()) {
+            throw new ConflictException(
+                    "Quantity cannot be less than reserved quantity"
+            );
+        }
 
         inventory.setQuantity(request.getQuantity());
 

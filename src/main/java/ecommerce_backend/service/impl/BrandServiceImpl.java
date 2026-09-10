@@ -3,9 +3,11 @@ package ecommerce_backend.service.impl;
 import ecommerce_backend.dto.BrandRequestDto;
 import ecommerce_backend.dto.BrandResponseDto;
 import ecommerce_backend.entity.Brand;
+import ecommerce_backend.exception.ConflictException;
 import ecommerce_backend.exception.ResourceNotFoundException;
 import ecommerce_backend.mapper.BrandMapper;
 import ecommerce_backend.repository.BrandRepository;
+import ecommerce_backend.repository.ProductRepository;
 import ecommerce_backend.service.BrandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ public class BrandServiceImpl implements BrandService {
 
     private final BrandRepository brandRepository;
     private final BrandMapper brandMapper;
+    private final ProductRepository productRepository;
 
     @Override
     @Transactional
@@ -28,7 +31,8 @@ public class BrandServiceImpl implements BrandService {
 
         Brand savedBrand = brandRepository.save(brand);
 
-        return brandMapper.toResponseDto(savedBrand);    }
+        return brandMapper.toResponseDto(savedBrand);
+    }
 
     @Override
     public List<BrandResponseDto> getAllBrands() {
@@ -83,6 +87,12 @@ public class BrandServiceImpl implements BrandService {
                                 "Brand not found with id: " + id
                         )
                 );
+
+        if (productRepository.existsByBrandId(id)) {
+            throw new ConflictException(
+                    "Cannot delete brand because it has products"
+            );
+        }
 
         brandRepository.delete(brand);
 

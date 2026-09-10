@@ -47,7 +47,11 @@ public class AddressServiceImpl implements AddressService {
 
         if (Boolean.TRUE.equals(request.getIsDefault())) {
 
-            addressRepository.findByUserAndIsDefaultTrue(user)
+            User lockedUser = userRepository.findByIdForUpdate(user.getId())
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException("User not found"));
+
+            addressRepository.findByUserAndIsDefaultTrue(lockedUser)
                     .ifPresent(existingDefault -> {
                         existingDefault.setIsDefault(false);
                         addressRepository.save(existingDefault);
@@ -127,7 +131,11 @@ public class AddressServiceImpl implements AddressService {
 
         if (Boolean.TRUE.equals(request.getIsDefault())) {
 
-            addressRepository.findByUserAndIsDefaultTrue(user)
+            User lockedUser = userRepository.findByIdForUpdate(user.getId())
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException("User not found"));
+
+            addressRepository.findByUserAndIsDefaultTrue(lockedUser)
                     .ifPresent(existingDefault -> {
 
                         if (!existingDefault.getId().equals(address.getId())) {

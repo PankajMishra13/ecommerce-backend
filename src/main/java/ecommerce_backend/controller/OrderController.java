@@ -2,6 +2,7 @@ package ecommerce_backend.controller;
 
 import ecommerce_backend.dto.OrderRequestDto;
 import ecommerce_backend.dto.OrderResponseDto;
+import ecommerce_backend.enums.OrderStatus;
 import ecommerce_backend.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -61,7 +62,7 @@ public class OrderController {
     @PutMapping("/{orderId}/status")
     public ResponseEntity<Void> updateOrderStatus(
             @PathVariable Long orderId,
-            @RequestParam String status) {
+            @RequestParam OrderStatus status) {
 
         orderService.updateOrderStatus(orderId, status);
 
