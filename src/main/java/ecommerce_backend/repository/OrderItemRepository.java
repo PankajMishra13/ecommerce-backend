@@ -13,6 +13,13 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
     List<OrderItem> findByOrderId(Long orderId);
 
     @Query("""
+    SELECT oi
+    FROM OrderItem oi
+    WHERE oi.order.id IN :orderIds
+    """)
+    List<OrderItem> findByOrderIds(@Param("orderIds") List<Long> orderIds);
+
+    @Query("""
         SELECT oi
         FROM OrderItem oi
         WHERE oi.order.user.id = :userId
